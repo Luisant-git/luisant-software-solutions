@@ -1,0 +1,45 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Appointment from "./pages/Appointment";
+import Ecommerce from "./pages/Ecommerce";
+import BusinessWebDesign from "./pages/BusinessWebDesign";
+import DigitalShowcase from "./pages/DigitalShowcase";
+import Admin from "./pages/Admin";
+import ProductPage from "./pages/ProductPage";
+import Career from "./pages/Career";
+import Contact from "./pages/Contact";
+import ScrollToTop from "./components/ScrollToTop";
+
+export default function App() {
+  return (
+    <Router>
+      <ScrollToTop />
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/appointment" element={<Appointment />} />
+            <Route path="/ecommerce" element={<Ecommerce />} />
+            <Route path="/business-design" element={<BusinessWebDesign />} />
+            <Route path="/digital-showcase" element={<DigitalShowcase />} />
+            <Route path="/career" element={<Career />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/product/:slug" element={<ProductPage />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
+  );
+}
