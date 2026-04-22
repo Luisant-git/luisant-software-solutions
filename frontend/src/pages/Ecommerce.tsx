@@ -59,32 +59,49 @@ const FAQS = [
 ];
 
 const BENEFITS = [
-  { img: "https://img.icons8.com/animated/100/ecommerce/hourglass.gif", title: "24/7 Availability & Convenience", desc: "Your shop never closes, allowing customers to buy whenever they want." },
-  { img: "https://img.icons8.com/animated/100/ecommerce/world-map.gif", title: "Wider Customer Reach", desc: "Break geographical barriers and sell to customers across the country or world." },
-  { img: "https://img.icons8.com/animated/100/ecommerce/wallet.gif", title: "Cost-Effective & Scalable", desc: "Lower overhead costs compared to physical stores and easy to scale as you grow." },
-  { img: "https://img.icons8.com/animated/100/ecommerce/graph.gif", title: "Customer Data & Insights", desc: "Track user behavior and sales trends to make data-driven business decisions." },
-  { img: "https://img.icons8.com/animated/100/ecommerce/megaphone.gif", title: "Improved Marketing & Lead Generation", desc: "Leverage SEO and social media integrations to drive targeted traffic." },
-  { img: "https://img.icons8.com/animated/100/ecommerce/settings.gif", title: "Automation & Efficient Operations", desc: "Automate inventory, orders, and customer management for better efficiency." },
-  { img: "https://img.icons8.com/animated/100/ecommerce/shipped.gif", title: "Multiple Payment & Shipping Options", desc: "Provide flexibility with various payment methods and delivery choices." },
-  { img: "https://img.icons8.com/animated/100/ecommerce/customer-support.gif", title: "Builds Brand & Customer Loyalty", desc: "Create direct relationships with customers through personalized experiences." }
+  { img: "https://img.icons8.com/color/96/clock--v1.png", title: "24/7 Availability & Convenience", desc: "Your shop never closes, allowing customers to buy whenever they want." },
+
+  { img: "https://img.icons8.com/color/96/worldwide-location.png", title: "Wider Customer Reach", desc: "Break geographical barriers and sell to customers across the country or world." },
+
+  { img: "https://img.icons8.com/color/96/low-price.png", title: "Cost-Effective & Scalable", desc: "Lower overhead costs compared to physical stores and easy to scale as you grow." },
+
+  { img: "https://img.icons8.com/color/96/combo-chart--v1.png", title: "Customer Data & Insights", desc: "Track user behavior and sales trends to make data-driven business decisions." },
+
+  { img: "https://img.icons8.com/color/96/workflow.png", title: "Improved Marketing & Lead Generation", desc: "Leverage SEO and social media integrations to drive targeted traffic." },
+
+  { img: "https://img.icons8.com/color/96/process.png", title: "Automation & Efficient Operations", desc: "Automate inventory, orders, and customer management for better efficiency." },
+
+  { img: "https://img.icons8.com/color/96/card-in-use.png", title: "Multiple Payment & Shipping Options", desc: "Provide flexibility with various payment methods and delivery choices." },
+
+  { img: "https://img.icons8.com/color/96/customer-insight.png", title: "Builds Brand & Customer Loyalty", desc: "Create direct relationships with customers through personalized experiences." }
 ];
 
 const INDUSTRIES = [
-  { name: "Retail & Consumer Goods", img: "https://img.icons8.com/animated/100/ecommerce/shopping-basket.gif", desc: "Empowering retailers with high-conversion storefronts." },
-  { name: "Fashion & Apparel", img: "https://img.icons8.com/animated/100/ecommerce/t-shirt.gif", desc: "Showcase your collections with style and elegance." },
-  { name: "Electronics & Gadgets", img: "https://img.icons8.com/animated/100/ecommerce/computer.gif", desc: "Sell technical products with detailed specs and easy navigation." },
-  { name: "Food & Grocery", img: "https://img.icons8.com/animated/100/ecommerce/shopping-bag.gif", desc: "Streamline deliveries and fresh-stock management." },
-  { name: "Healthcare & Pharmacy", img: "https://img.icons8.com/animated/100/ecommerce/heart-with-pulse.gif", desc: "Secure and accessible platforms for medical supplies." },
-  { name: "Beauty & Personal Care", img: "https://img.icons8.com/animated/100/ecommerce/cosmetic-brush.gif", desc: "Beautifully designed shops for cosmetic brands." },
-  { name: "Art, Collectibles & Handicrafts", img: "https://img.icons8.com/animated/100/ecommerce/paint-palette.gif", desc: "Unique platforms for creators and collectors." },
-  { name: "B2B Ecommerce", img: "https://img.icons8.com/animated/100/ecommerce/handshake.gif", desc: "Robust portals for wholesale and bulk ordering." }
+  { name: "Retail & Consumer Goods", img: "https://img.icons8.com/color/96/shopping-cart.png", desc: "Empowering retailers with high-conversion storefronts." },
+
+  { name: "Fashion & Apparel", img: "https://img.icons8.com/color/96/t-shirt.png", desc: "Showcase your collections with style and elegance." },
+
+  { name: "Electronics & Gadgets", img: "https://img.icons8.com/color/96/laptop.png", desc: "Sell technical products with detailed specs and easy navigation." },
+
+  { name: "Food & Grocery", img: "https://img.icons8.com/color/96/shopping-basket-2.png", desc: "Streamline deliveries and fresh-stock management." },
+
+  { name: "Healthcare & Pharmacy", img: "https://img.icons8.com/color/96/heart-health.png", desc: "Secure and accessible platforms for medical supplies." },
+
+  { name: "Beauty & Personal Care", img: "https://img.icons8.com/color/96/lipstick.png", desc: "Beautifully designed shops for cosmetic brands." },
+
+  { name: "Art, Collectibles & Handicrafts", img: "https://img.icons8.com/color/96/paint-palette.png", desc: "Unique platforms for creators and collectors." },
+
+  { name: "B2B Ecommerce", img: "https://img.icons8.com/color/96/handshake.png", desc: "Robust portals for wholesale and bulk ordering." }
 ];
 
 const PORTFOLIO = [
-  { name: "Saaz Fashions", url: "https://saazfashions.com", img: "https://img.icons8.com/animated/100/ecommerce/dress.gif" },
-  { name: "Knowledge Electronics", url: "#", img: "https://img.icons8.com/animated/100/ecommerce/smart-home.gif" },
-  { name: "Panto Pollon", url: "#", img: "https://img.icons8.com/animated/100/ecommerce/packaging.gif" },
-  { name: "Thulir Organics", url: "https://thulirorganics.in", img: "https://img.icons8.com/animated/100/ecommerce/organic-food.gif" }
+  { name: "Saaz Fashions", url: "https://saazfashions.com", img: "https://img.icons8.com/color/96/clothes.png" },
+
+  { name: "Knowledge Electronics", url: "https://knowledgeelectronics.com", img: "https://img.icons8.com/color/96/electronics.png" },
+
+  { name: "Panto Pollon", url: "http://pantopolion.nl", img: "https://img.icons8.com/color/96/box.png" },
+
+  { name: "Thulir Organics", url: "https://thulirorganics.in", img: "https://img.icons8.com/color/96/organic-food.png" }
 ];
 
 import { Clock, Settings, Heart } from "lucide-react";

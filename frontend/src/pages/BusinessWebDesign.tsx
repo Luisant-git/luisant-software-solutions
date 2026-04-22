@@ -37,17 +37,27 @@ const SKILLS = [
 ];
 
 const INDUSTRIES = [
-  { name: "REAL ESTATE", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-House-real-estate-flat-icons-inmotus-design.png", desc: "Build trust with professional property showcases and lead-gen landing pages." },
-  { name: "PHOTO STUDIO", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-Camera-multimedia-flat-icons-inmotus-design.png", desc: "Showcase your artistic portfolio with elegant and immersive gallery designs." },
-  { name: "EXPORT & IMPORT", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-Cargo-logistics-flat-icons-inmotus-design.png", desc: "Global reach platforms for shipping, logistics, and international trade." },
-  { name: "EVENT MANAGEMENT", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-Calendar-office-flat-icons-inmotus-design.png", desc: "Manage bookings and highlight past events with dynamic showcase pages." },
-  { name: "BOUTIQUES & FASHION", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-Dress-fashion-flat-icons-inmotus-design.png", desc: "Stylish storefronts that reflect your brand's unique aesthetic and fashion sense." },
-  { name: "CONSTRUCTION", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-Crane-construction-flat-icons-inmotus-design.png", desc: "Professional websites for architectural firms and construction contractors." },
-  { name: "CHARITABLE TRUST", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-Heart-care-flat-icons-inmotus-design.png", desc: "Enhance your non-profit's impact with donation-ready and awareness platforms." },
-  { name: "EDUCATIONAL", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-Graduation-cap-education-flat-icons-inmotus-design.png", desc: "User-friendly portals for schools, colleges, and e-learning platforms." },
-  { name: "MANUFACTURING", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-Factory-industrial-flat-icons-inmotus-design.png", desc: "Industrial-grade websites highlighting production capabilities and product catalogs." },
-  { name: "HEALTH CARE", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-First-aid-kit-healthcare-flat-icons-inmotus-design.png", desc: "Secure and accessible digital solutions for clinics, hospitals, and pharmacies." },
-  { name: "CUSTOM DEVELOPMENT", img: "https://img.icons8.com/external-flat-icons-inmotus-design/67/external-Computer-digital-marketing-flat-icons-inmotus-design.png", desc: "Unique, high-performance web applications tailored to your specific business model." }
+  { name: "REAL ESTATE", img: "https://img.icons8.com/color/96/home.png", desc: "Build trust with professional property showcases and lead-gen landing pages." },
+
+  { name: "PHOTO STUDIO", img: "https://img.icons8.com/color/96/camera.png", desc: "Showcase your artistic portfolio with elegant and immersive gallery designs." },
+
+  { name: "EXPORT & IMPORT", img: "https://img.icons8.com/color/96/cargo-ship.png", desc: "Global reach platforms for shipping, logistics, and international trade." },
+
+  { name: "EVENT MANAGEMENT", img: "https://img.icons8.com/color/96/event-accepted.png", desc: "Manage bookings and highlight past events with dynamic showcase pages." },
+
+  { name: "BOUTIQUES & FASHION", img: "https://img.icons8.com/color/96/t-shirt.png", desc: "Stylish storefronts that reflect your brand's unique aesthetic and fashion sense." },
+
+  { name: "CONSTRUCTION", img: "https://img.icons8.com/color/96/crane.png", desc: "Professional websites for architectural firms and construction contractors." },
+
+  { name: "CHARITABLE TRUST", img: "https://img.icons8.com/color/96/charity.png", desc: "Enhance your non-profit's impact with donation-ready and awareness platforms." },
+
+  { name: "EDUCATIONAL", img: "https://img.icons8.com/color/96/graduation-cap.png", desc: "User-friendly portals for schools, colleges, and e-learning platforms." },
+
+  { name: "MANUFACTURING", img: "https://img.icons8.com/color/96/factory.png", desc: "Industrial-grade websites highlighting production capabilities and product catalogs." },
+
+  { name: "HEALTH CARE", img: "https://img.icons8.com/color/96/health-book.png", desc: "Secure and accessible digital solutions for clinics, hospitals, and pharmacies." },
+
+  { name: "CUSTOM DEVELOPMENT", img: "https://img.icons8.com/color/96/source-code.png", desc: "Unique, high-performance web applications tailored to your specific business model." }
 ];
 
 const FAQS = [
@@ -129,7 +139,7 @@ const PORTFOLIO = [
   { name: "JK Agro Exporters", url: "www.jkagroexporters.com", color: "bg-[#e2f18b]", img: "https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&q=80&w=800" },
   { name: "Thulir Organics", url: "www.thulirorganics.in", color: "bg-[#e3ead3]", img: "https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&q=80&w=800" },
   { name: "I Globe Services", url: "www.iglobeservices.com", color: "bg-slate-50", img: "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&q=80&w=800" },
-  { name: "Mighty Man Power Solution", url: "www.mightymanpowersolution.in", color: "bg-white", img: "https://images.unsplash.com/photo-1521791136364-798a7bc0d262?auto=format&fit=crop&q=80&w=800" }
+  { name: "Mighty Man Power Solution", url: "www.mightymanpowersolution.in", color: "bg-white", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80" }
 ];
 
 export default function BusinessWebDesign() {
