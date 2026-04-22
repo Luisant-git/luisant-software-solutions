@@ -5,7 +5,7 @@
 
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { getClients, Client } from "../lib/productService";
+import { clientsApi, Client } from "../lib/clientsApi";
 
 const STATIC_CLIENTS = [
   "JK Agro Exporters",
@@ -22,15 +22,20 @@ export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
 
   useEffect(() => {
-    const data = getClients();
-    if (data.length > 0) {
-      setClients(data);
-    }
+    const loadClients = async () => {
+      try {
+        const data = await clientsApi.getPublic();
+        setClients(data);
+      } catch (error) {
+        console.error('Failed to load clients:', error);
+      }
+    };
+    loadClients();
   }, []);
 
   const displayList = clients.length > 0 
     ? [...clients, ...clients] 
-    : [...STATIC_CLIENTS, ...STATIC_CLIENTS];
+    : STATIC_CLIENTS.map(name => ({ id: name, name, logo: '' })).concat(STATIC_CLIENTS.map(name => ({ id: name, name, logo: '' })));
 
   return (
     <section className="py-12 bg-slate-50 overflow-hidden">

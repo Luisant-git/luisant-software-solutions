@@ -1,62 +1,59 @@
+import { productsApi } from './productsApi';
+import { clientsApi } from './clientsApi';
+
 export interface Product {
   id: string;
   slug: string;
   name: string;
   description: string;
   points: string[];
+  adminId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Client {
   id: string;
   name: string;
-  logo: string; // Base64 or URL
+  logo: string;
+  adminId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-const STORAGE_KEY = 'luisant_products';
-const CLIENTS_KEY = 'luisant_clients';
-
-export const getProducts = (): Product[] => {
-  const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
-};
-
-export const saveProduct = (product: Product) => {
-  const products = getProducts();
-  const index = products.findIndex(p => p.id === product.id);
-  if (index >= 0) {
-    products[index] = product;
-  } else {
-    products.push(product);
+// Products - Using API
+export const getProducts = async (): Promise<Product[]> => {
+  try {
+    return await productsApi.getPublic();
+  } catch (error) {
+    console.error('Failed to fetch products:', error);
+    return [];
   }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
 };
 
-export const deleteProduct = (id: string) => {
-  const products = getProducts().filter(p => p.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+export const getProductBySlug = async (slug: string): Promise<Product | undefined> => {
+  try {
+    return await productsApi.getBySlug(slug);
+  } catch (error) {
+    console.error('Failed to fetch product:', error);
+    return undefined;
+  }
 };
 
-export const getProductBySlug = (slug: string): Product | undefined => {
-  return getProducts().find(p => p.slug === slug);
-};
-
-export const getClients = (): Client[] => {
-  const data = localStorage.getItem(CLIENTS_KEY);
-  return data ? JSON.parse(data) : [];
+// Clients - Using API
+export const getClients = async (): Promise<Client[]> => {
+  try {
+    return await clientsApi.getPublic();
+  } catch (error) {
+    console.error('Failed to fetch clients:', error);
+    return [];
+  }
 };
 
 export const saveClient = (client: Client) => {
-  const clients = getClients();
-  const index = clients.findIndex(c => c.id === client.id);
-  if (index >= 0) {
-    clients[index] = client;
-  } else {
-    clients.push(client);
-  }
-  localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
+  // TODO: Implement client API
 };
 
 export const deleteClient = (id: string) => {
-  const clients = getClients().filter(c => c.id !== id);
-  localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
+  // TODO: Implement client API
 };

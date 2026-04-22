@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Lock, Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon } from "lucide-react";
-import { Product, getProducts, saveProduct, deleteProduct, Client, getClients, saveClient, deleteClient } from "../lib/productService";
+import { Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { authApi } from "../lib/authApi";
+import { productsApi, Product } from "../lib/productsApi";
+import { clientsApi, Client } from "../lib/clientsApi";
+import { uploadApi } from "../lib/uploadApi";
 
 export default function Admin() {
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "clients">("products");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
@@ -17,91 +20,92 @@ export default function Admin() {
   const [editingClient, setEditingClient] = useState<Partial<Client> | null>(null);
 
   useEffect(() => {
-    const auth = localStorage.getItem("luisant_admin_auth");
-    if (auth === "true") {
+    if (!authApi.isAuthenticated()) {
+      navigate('/login');
+    } else {
       setIsAuthenticated(true);
-      loadData();
+      loadProducts();
+      loadClients();
     }
-  }, []);
+  }, [navigate]);
 
-  const loadData = () => {
-    setProducts(getProducts());
-    setClients(getClients());
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const data = await productsApi.getAll();
+      setProducts(data);
+    } catch (error) {
+      console.error('Failed to load products:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (username === "admin" && password === "password123") {
-      setIsAuthenticated(true);
-      localStorage.setItem("luisant_admin_auth", "true");
-      setError("");
-      loadData();
-    } else {
-      setError("Invalid credentials");
+  const loadClients = async () => {
+    try {
+      setLoading(true);
+      const data = await clientsApi.getAll();
+      setClients(data);
+    } catch (error) {
+      console.error('Failed to load clients:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
+    authApi.removeToken();
     setIsAuthenticated(false);
-    localStorage.removeItem("luisant_admin_auth");
+    navigate('/login');
   };
 
   // Product Actions
   const handleAddProduct = () => {
     setEditingProduct({
-      id: Date.now().toString(),
+      id: "",
       name: "",
       slug: "",
       description: "",
-      points: [""]
+      points: [""],
+      adminId: "",
+      createdAt: "",
+      updatedAt: "",
     });
   };
 
-  const handleSaveProduct = () => {
-    if (editingProduct && editingProduct.name && editingProduct.slug) {
-      saveProduct(editingProduct as Product);
+  const handleSaveProduct = async () => {
+    if (!editingProduct || !editingProduct.name || !editingProduct.slug) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      if (editingProduct.id) {
+        await productsApi.update(editingProduct.id, editingProduct);
+      } else {
+        await productsApi.create(editingProduct as any);
+      }
       setEditingProduct(null);
-      loadData();
+      await loadProducts();
+    } catch (error: any) {
+      alert(error.message || 'Failed to save product');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDeleteProduct = (id: string) => {
-    deleteProduct(id);
-    loadData();
-  };
+  const handleDeleteProduct = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
 
-  // Client Actions
-  const handleAddClient = () => {
-    setEditingClient({
-      id: Date.now().toString(),
-      name: "",
-      logo: ""
-    });
-  };
-
-  const handleSaveClient = () => {
-    if (editingClient && editingClient.name) {
-      saveClient(editingClient as Client);
-      setEditingClient(null);
-      loadData();
-    }
-  };
-
-  const handleDeleteClient = (id: string) => {
-    deleteClient(id);
-    loadData();
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (editingClient) {
-          setEditingClient({ ...editingClient, logo: reader.result as string });
-        }
-      };
-      reader.readAsDataURL(file);
+    try {
+      setLoading(true);
+      await productsApi.delete(id);
+      await loadProducts();
+    } catch (error: any) {
+      alert(error.message || 'Failed to delete product');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -117,54 +121,73 @@ export default function Admin() {
     setEditingProduct({ ...editingProduct, points: [...(editingProduct.points || []), ""] });
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full bg-white rounded-xl shadow-xl p-8 border border-slate-100"
-        >
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Lock size={32} />
-            </div>
-            <h2 className="text-2xl font-bold text-secondary">Admin Login</h2>
-            <p className="text-slate-500">Access your business dashboard</p>
-          </div>
+  // Client Actions
+  const handleAddClient = () => {
+    setEditingClient({
+      id: "",
+      name: "",
+      logo: "",
+      adminId: "",
+      createdAt: "",
+      updatedAt: "",
+    });
+  };
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Username</label>
-              <input 
-                type="text" 
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-5 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                placeholder="admin"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Password</label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                placeholder="••••••••"
-              />
-            </div>
-            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-            <button 
-              type="submit"
-              className="w-full bg-primary text-white py-4 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20"
-            >
-              LOG IN
-            </button>
-          </form>
-        </motion.div>
-      </div>
-    );
+  const handleSaveClient = async () => {
+    if (!editingClient || !editingClient.name) {
+      alert('Please fill in client name');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      if (editingClient.id) {
+        await clientsApi.update(editingClient.id, editingClient);
+      } else {
+        await clientsApi.create(editingClient as any);
+      }
+      setEditingClient(null);
+      await loadClients();
+    } catch (error: any) {
+      alert(error.message || 'Failed to save client');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClient = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this client?')) return;
+
+    try {
+      setLoading(true);
+      await clientsApi.delete(id);
+      await loadClients();
+    } catch (error: any) {
+      alert(error.message || 'Failed to delete client');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        setLoading(true);
+        const result = await uploadApi.uploadFile(file);
+        if (editingClient) {
+          setEditingClient({ ...editingClient, logo: result.url });
+        }
+      } catch (error: any) {
+        alert(error.message || 'Failed to upload image');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  if (!isAuthenticated) {
+    return null;
   }
 
   return (
@@ -203,46 +226,43 @@ export default function Admin() {
           <div className="lg:col-span-4 space-y-4">
             <button 
               onClick={activeTab === "products" ? handleAddProduct : handleAddClient}
-              className="w-full bg-slate-900 text-white p-6 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all"
+              disabled={loading}
+              className="w-full bg-slate-900 text-white p-6 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all disabled:opacity-50"
             >
               <Plus size={20} />
-              ADD NEW {activeTab.toUpperCase().slice(0, -1)}
+              ADD NEW {activeTab === "products" ? "PRODUCT" : "CLIENT"}
             </button>
 
             <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 space-y-2">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Existing {activeTab}</h3>
-              {activeTab === "products" ? (
-                products.length === 0 ? (
-                  <div className="text-center py-10 text-slate-400 italic">No products added yet.</div>
-                ) : (
-                  products.map((p) => (
-                    <div key={p.id} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 group transition-all hover:shadow-md">
-                      <span className="font-bold text-secondary truncate mr-4">{p.name}</span>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => setEditingProduct(p)} className="p-2 text-slate-400 hover:text-primary transition-colors">Edit</button>
-                        <button onClick={() => handleDeleteProduct(p.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
-                      </div>
-                    </div>
-                  ))
-                )
-              ) : (
-                clients.length === 0 ? (
-                  <div className="text-center py-10 text-slate-400 italic">No clients added yet.</div>
-                ) : (
-                  clients.map((c) => (
-                    <div key={c.id} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 group transition-all hover:shadow-md">
-                      <div className="flex items-center gap-3">
-                        {c.logo && <img src={c.logo} className="w-8 h-8 rounded object-contain bg-slate-50" />}
-                        <span className="font-bold text-secondary truncate mr-4">{c.name}</span>
-                      </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => setEditingClient(c)} className="p-2 text-slate-400 hover:text-primary transition-colors">Edit</button>
-                        <button onClick={() => handleDeleteClient(c.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
-                      </div>
-                    </div>
-                  ))
-                )
+              {loading && <div className="text-center py-10 text-slate-400">Loading...</div>}
+              {!loading && activeTab === "products" && products.length === 0 && (
+                <div className="text-center py-10 text-slate-400 italic">No products added yet.</div>
               )}
+              {!loading && activeTab === "clients" && clients.length === 0 && (
+                <div className="text-center py-10 text-slate-400 italic">No clients added yet.</div>
+              )}
+              {!loading && activeTab === "products" && products.map((p) => (
+                <div key={p.id} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 group transition-all hover:shadow-md">
+                  <span className="font-bold text-secondary truncate mr-4">{p.name}</span>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => setEditingProduct(p)} className="p-2 text-slate-400 hover:text-primary transition-colors">Edit</button>
+                    <button onClick={() => handleDeleteProduct(p.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                  </div>
+                </div>
+              ))}
+              {!loading && activeTab === "clients" && clients.map((c) => (
+                <div key={c.id} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 group transition-all hover:shadow-md">
+                  <div className="flex items-center gap-3">
+                    {c.logo && <img src={c.logo} className="w-8 h-8 rounded object-contain bg-slate-50" />}
+                    <span className="font-bold text-secondary truncate mr-4">{c.name}</span>
+                  </div>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => setEditingClient(c)} className="p-2 text-slate-400 hover:text-primary transition-colors">Edit</button>
+                    <button onClick={() => handleDeleteClient(c.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -251,24 +271,24 @@ export default function Admin() {
               editingProduct ? (
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-8">
-                    <button onClick={handleSaveProduct} className="bg-primary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20">
-                      <Save size={18} /> SAVE CHANGES
+                    <button onClick={handleSaveProduct} disabled={loading} className="bg-primary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
+                      <Save size={18} /> {loading ? 'SAVING...' : 'SAVE CHANGES'}
                     </button>
                   </div>
                   <h2 className="text-2xl font-black text-secondary mb-10 uppercase tracking-tight italic">Product Editor</h2>
                   <div className="grid md:grid-cols-2 gap-6 mb-8 text-secondary">
                     <div className="space-y-2">
                       <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Product Name</label>
-                      <input type="text" value={editingProduct.name} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                      <input type="text" value={editingProduct.name || ''} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-black text-slate-400 uppercase tracking-widest">URL Slug</label>
-                      <input type="text" value={editingProduct.slug} onChange={(e) => setEditingProduct({ ...editingProduct, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                      <input type="text" value={editingProduct.slug || ''} onChange={(e) => setEditingProduct({ ...editingProduct, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
                   </div>
                   <div className="space-y-2 mb-8 text-secondary">
                     <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Description</label>
-                    <textarea rows={4} value={editingProduct.description} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                    <textarea rows={4} value={editingProduct.description || ''} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -287,16 +307,16 @@ export default function Admin() {
             ) : (
               editingClient ? (
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
-                   <div className="absolute top-0 right-0 p-8">
-                    <button onClick={handleSaveClient} className="bg-primary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20">
-                      <Save size={18} /> SAVE CHANGES
+                  <div className="absolute top-0 right-0 p-8">
+                    <button onClick={handleSaveClient} disabled={loading} className="bg-primary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
+                      <Save size={18} /> {loading ? 'SAVING...' : 'SAVE CHANGES'}
                     </button>
                   </div>
                   <h2 className="text-2xl font-black text-secondary mb-10 uppercase tracking-tight italic">Client Editor</h2>
                   <div className="space-y-6 text-secondary">
                     <div className="space-y-2">
                       <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Client Name</label>
-                      <input type="text" value={editingClient.name} onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
+                      <input type="text" value={editingClient.name || ''} onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
                     </div>
                     
                     <div className="space-y-4">

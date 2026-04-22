@@ -16,18 +16,21 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    const products = getProducts();
-    if (products.length > 0) {
-      setDynamicProducts(products.map(p => ({
-        name: p.name,
-        href: `/product/${p.slug}`
-      })));
-    } else {
-      setDynamicProducts([
-        { name: "Billing Software", href: "#" },
-        { name: "MicroFin Manager", href: "#" }
-      ]);
-    }
+    const loadProducts = async () => {
+      const products = await getProducts();
+      if (products.length > 0) {
+        setDynamicProducts(products.map(p => ({
+          name: p.name,
+          href: `/product/${p.slug}`
+        })));
+      } else {
+        setDynamicProducts([
+          { name: "Billing Software", href: "#" },
+          { name: "MicroFin Manager", href: "#" }
+        ]);
+      }
+    };
+    loadProducts();
   }, [location.pathname]);
 
   const navLinks = [

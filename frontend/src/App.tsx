@@ -13,6 +13,7 @@ import Ecommerce from "./pages/Ecommerce";
 import BusinessWebDesign from "./pages/BusinessWebDesign";
 import DigitalShowcase from "./pages/DigitalShowcase";
 import Admin from "./pages/Admin";
+import Login from "./pages/Login";
 import ProductPage from "./pages/ProductPage";
 import Career from "./pages/Career";
 import Contact from "./pages/Contact";
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="/digital-showcase" element={<DigitalShowcase />} />
             <Route path="/career" element={<Career />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/product/:slug" element={<ProductPage />} />
           </Routes>
