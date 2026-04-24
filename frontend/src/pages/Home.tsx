@@ -4,6 +4,7 @@
  */
 
 import Hero from "../components/Hero";
+import Carousel from "../components/Carousel";
 import PromoBar from "../components/PromoBar";
 import Services from "../components/Services";
 import Products from "../components/Products";
@@ -15,7 +16,7 @@ import Clients from "../components/Clients";
 export default function Home() {
   return (
     <>
-      <Hero />
+      <Carousel />
       <PromoBar />
       <Products />
       <Services />
