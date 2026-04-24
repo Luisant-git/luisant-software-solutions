@@ -25,7 +25,7 @@ export default function Appointment() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
                 {[
                   { icon: Phone, label: "Call Us", val: "+91 427 405 6538" },
-                  { icon: Mail, label: "Email Us", val: "info@luisant.in" },
+                  { icon: Mail, label: "Email Us", val: "info@luisantsoftwares.com" },
                   { icon: MapPin, label: "Location", val: "Salem, Tamil Nadu" },
                   { icon: Clock, label: "Mon - Sat", val: "9:00 AM - 6:00 PM" }
                 ].map((item, i) => (

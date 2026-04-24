@@ -9,7 +9,7 @@ import client1 from "../images/clients/luisant-client1.png";
 import client2 from "../images/clients/luisant-client2.png";
 import client3 from "../images/clients/luisant-client3.png";
 import client4 from "../images/clients/luisant-client4.png";
-import FreeDemoBar from "../components/FreeDemoBar";
+import PromoBar from "../components/PromoBar";
 
 export default function About() {
   return (
@@ -50,6 +50,9 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      {/* PromoBar after About Section */}
+      <PromoBar />
 
       {/* Our Commitments Section */}
       <section className="py-16 md:py-24 bg-slate-50 overflow-hidden">
@@ -115,9 +118,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      {/* About CTA Section */}
-      <FreeDemoBar />
     </div>
   );
 }

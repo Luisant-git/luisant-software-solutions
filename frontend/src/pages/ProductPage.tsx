@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Product, getProductBySlug } from "../lib/productService";
 import AppointmentForm from "../components/AppointmentForm";
+import PromoBar from "../components/PromoBar";
 
 export default function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -31,21 +32,7 @@ export default function ProductPage() {
   return (
     <div className="pt-16 min-h-screen bg-white">
       {/* CTA Strip */}
-      <section className="py-10 bg-[#F6C644] relative z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="text-center md:text-left">
-            <h3 className="text-2xl md:text-3xl font-bold text-secondary mb-1 uppercase">CONTACT FOR A FREE DEMO</h3>
-            <p className="text-sm font-bold text-secondary/60 uppercase tracking-widest">25% OFF FOR ALL SERVICES</p>
-          </div>
-          <Link 
-            to="/appointment" 
-            className="bg-[#1C77C3] text-white px-10 py-5 rounded-xl font-black text-sm tracking-widest flex items-center gap-3 hover:bg-opacity-90 transition-all active:scale-95 shadow-xl shadow-black/10 group"
-          >
-            MAKE AN APPOINTMENT 
-            <div className="w-10 h-0.5 bg-white scale-x-75 group-hover:scale-x-100 transition-transform origin-right" />
-          </Link>
-        </div>
-      </section>
+      <PromoBar />
 
       {/* Product Content */}
       <section className="py-20 bg-white">

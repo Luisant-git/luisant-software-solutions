@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import AppointmentForm from "../components/AppointmentForm";
-import FreeDemoBar from "../components/FreeDemoBar";
+import PromoBar from "../components/PromoBar";
 
 const SKILLS = [
   { name: "Responsive Web Design", percent: 100 },
@@ -222,8 +222,6 @@ export default function BusinessWebDesign() {
         </div>
       </section>
 
-      <FreeDemoBar />
-
       {/* Main Content Section */}
       <section className="py-16 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -269,6 +267,9 @@ export default function BusinessWebDesign() {
           </div>
         </div>
       </section>
+
+      {/* PromoBar after Business Website Designing Section */}
+      <PromoBar />
 
       {/* Skills & Form Section */}
       <section className="py-16 bg-slate-50/50">

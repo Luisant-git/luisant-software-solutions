@@ -52,9 +52,15 @@ export default function Footer() {
               <div className="w-8 h-[2px] bg-primary" /> Information
             </h4>
             <ul className="space-y-4 text-slate-400">
-              {["Privacy Policy", "Terms & Conditions", "Refund Policy"].map(link => (
-                <li key={link} className="hover:text-primary transition-colors cursor-pointer">{link}</li>
-              ))}
+              <li>
+                <a href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</a>
+              </li>
+              <li>
+                <a href="/terms-conditions/" className="hover:text-primary transition-colors">Terms & Conditions</a>
+              </li>
+              <li>
+                <a href="/refund-policy/" className="hover:text-primary transition-colors">Refund Policy</a>
+              </li>
               <li>
                 <a href="/career" className="hover:text-primary transition-colors">Careers</a>
               </li>
@@ -63,9 +69,6 @@ export default function Footer() {
               </li>
               <li>
                 <a href="/contact" className="hover:text-primary transition-colors">Contact Us</a>
-              </li>
-              <li className="pt-2">
-                <a href="/admin" className="text-xs text-slate-600 hover:text-primary transition-colors">Admin Login</a>
               </li>
             </ul>
           </div>
@@ -88,7 +91,7 @@ export default function Footer() {
                 <div className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center text-primary shrink-0">
                   <Mail size={18} />
                 </div>
-                <p className="text-slate-400 text-sm break-all font-medium">info@luisant.in</p>
+                <p className="text-slate-400 text-sm break-all font-medium">info@luisantsoftwares.com</p>
               </div>
               <div className="flex gap-4">
                 <div className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center text-primary shrink-0">
@@ -105,8 +108,8 @@ export default function Footer() {
             © {new Date().getFullYear()} Luisant Software Solutions. All Rights Reserved.
           </p>
           <div className="flex gap-8 text-sm text-slate-500 font-medium">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <a href="/privacy-policy" className="hover:text-white transition-colors">Privacy</a>
+            <a href="/terms-conditions/" className="hover:text-white transition-colors">Terms</a>
             <a href="#" className="hover:text-white transition-colors">Cookies</a>
           </div>
         </div>

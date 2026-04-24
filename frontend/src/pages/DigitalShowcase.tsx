@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import AppointmentForm from "../components/AppointmentForm";
-import FreeDemoBar from "../components/FreeDemoBar";
+import PromoBar from "../components/PromoBar";
 
 const BENEFITS = [
   { 
@@ -52,7 +52,7 @@ export default function DigitalShowcase() {
   return (
     <div className="pt-16 min-h-screen bg-white">
       {/* CTA Strip */}
-      <FreeDemoBar />
+      <PromoBar />
 
       {/* Main Content */}
       <section className="py-12 md:py-20 bg-white">

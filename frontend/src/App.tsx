@@ -17,6 +17,9 @@ import Login from "./pages/Login";
 import ProductPage from "./pages/ProductPage";
 import Career from "./pages/Career";
 import Contact from "./pages/Contact";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import RefundPolicy from "./pages/RefundPolicy";
 import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
@@ -35,6 +38,9 @@ export default function App() {
             <Route path="/digital-showcase" element={<DigitalShowcase />} />
             <Route path="/career" element={<Career />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-conditions/" element={<TermsAndConditions />} />
+            <Route path="/refund-policy/" element={<RefundPolicy />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/product/:slug" element={<ProductPage />} />

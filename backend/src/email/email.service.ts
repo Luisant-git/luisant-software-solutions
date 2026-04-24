@@ -110,7 +110,7 @@ export class EmailService {
                 <p style="color: #1C77C3; font-weight: 600; margin: 0 0 10px 0;">Contact Information:</p>
                 <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Phone:</strong> +91 427 405 6538</p>
                 <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Mobile:</strong> +91 90803 56538</p>
-                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Email:</strong> info@luisant.in</p>
+                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Email:</strong> info@luisantsoftwares.com</p>
               </div>
               
               <p style="color: #666; font-size: 14px; line-height: 1.6;">If you have any questions or need to reschedule, please don't hesitate to reach out to us.</p>
@@ -226,7 +226,7 @@ export class EmailService {
                 <p style="color: #1C77C3; font-weight: 600; margin: 0 0 10px 0;">Contact Information:</p>
                 <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Phone:</strong> +91 427 405 6538</p>
                 <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Mobile:</strong> +91 90803 56538</p>
-                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Email:</strong> info@luisant.in</p>
+                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Email:</strong> info@luisantsoftwares.com</p>
               </div>
               
               <p style="color: #666; font-size: 14px; line-height: 1.6;">We appreciate your interest in joining our team. Best of luck!</p>

@@ -16,7 +16,7 @@ export default function FreeDemoBar({
   className = ""
 }: FreeDemoBarProps) {
   return (
-    <section className={`relative overflow-hidden bg-[#F6C644] py-7 ${className}`}>
+    <section className={`relative overflow-hidden bg-secondary py-7 ${className}`}>
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 1.5px 1.5px, rgba(0,0,0,0.15) 1px, transparent 0)', backgroundSize: '12px 12px' }} />
       
@@ -27,7 +27,7 @@ export default function FreeDemoBar({
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="text-xl md:text-2xl lg:text-3xl font-bold text-secondary tracking-tight leading-tight uppercase mb-0.5"
+              className="text-xl md:text-2xl lg:text-3xl font-bold text-white tracking-tight leading-tight uppercase mb-0.5"
             >
               {title}
             </motion.h2>
@@ -38,8 +38,8 @@ export default function FreeDemoBar({
               transition={{ delay: 0.2 }}
               className="flex items-center gap-2 justify-center md:justify-start"
             >
-              <div className="hidden sm:block h-[1.5px] w-6 bg-secondary/20" />
-              <p className="text-[9px] md:text-[10px] font-bold text-secondary/60 uppercase tracking-[0.25em]">{subtitle}</p>
+              <div className="hidden sm:block h-[1.5px] w-6 bg-white/20" />
+              <p className="text-[9px] md:text-[10px] font-bold text-white/60 uppercase tracking-[0.25em]">{subtitle}</p>
             </motion.div>
           </div>
           
@@ -51,7 +51,7 @@ export default function FreeDemoBar({
           >
             <Link 
               to="/appointment"
-              className="group bg-[#1C77C3] text-white px-6 py-3.5 rounded-xl font-bold text-[10px] tracking-[0.15em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase whitespace-nowrap"
+              className="group bg-white text-secondary px-6 py-3.5 rounded-xl font-bold text-[10px] tracking-[0.15em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase whitespace-nowrap"
             >
               {buttonText}
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />

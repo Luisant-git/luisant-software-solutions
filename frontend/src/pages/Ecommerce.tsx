@@ -107,7 +107,7 @@ const PORTFOLIO = [
 import { Clock, Settings, Heart } from "lucide-react";
 
 import AppointmentForm from "../components/AppointmentForm";
-import FreeDemoBar from "../components/FreeDemoBar";
+import PromoBar from "../components/PromoBar";
 
 export default function Ecommerce() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -184,9 +184,6 @@ export default function Ecommerce() {
         </div>
       </section>
 
-      {/* CTA Strip - Moved after Hero */}
-      <FreeDemoBar />
-
       {/* Intro Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -223,6 +220,9 @@ export default function Ecommerce() {
           </div>
         </div>
       </section>
+
+      {/* PromoBar after Ecommerce Development Section */}
+      <PromoBar />
 
       {/* Why eCommerce Section */}
       <section className="py-16 bg-slate-50 overflow-hidden">
