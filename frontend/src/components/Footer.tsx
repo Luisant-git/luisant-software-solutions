@@ -65,10 +65,10 @@ export default function Footer() {
                 <a href="/career" className="hover:text-primary transition-colors">Careers</a>
               </li>
               <li>
-                <a href="/about" className="hover:text-primary transition-colors">About Us</a>
+                <a href="/about-us" className="hover:text-primary transition-colors">About Us</a>
               </li>
               <li>
-                <a href="/contact" className="hover:text-primary transition-colors">Contact Us</a>
+                <a href="/contact-us" className="hover:text-primary transition-colors">Contact Us</a>
               </li>
             </ul>
           </div>

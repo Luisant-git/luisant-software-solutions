@@ -143,7 +143,7 @@ export default function Ecommerce() {
                 transition={{ delay: 0.3 }}
               >
                 <Link 
-                  to="/appointment"
+                  to="/customer-enquiry-form"
                   className="inline-block bg-white text-[#1e1438] px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl"
                 >
                   ENQUIRE NOW

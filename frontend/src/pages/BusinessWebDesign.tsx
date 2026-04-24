@@ -168,7 +168,7 @@ export default function BusinessWebDesign() {
               
               <div className="flex flex-wrap gap-4 mb-8">
                 <Link 
-                  to="/appointment"
+                  to="/customer-enquiry-form"
                   className="bg-white text-secondary px-8 py-3 rounded-full font-bold uppercase tracking-widest hover:scale-105 transition-transform"
                 >
                   ENQUIRE NOW

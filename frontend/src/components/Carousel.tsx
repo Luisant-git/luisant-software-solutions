@@ -15,7 +15,7 @@ const slides = [
     subtitle: "Dedicated to Delivering Exceptional Technology",
     description: "We empower enterprises with cutting-edge software solutions that drive growth, efficiency, and market leadership in the digital era.",
     image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1920",
-    link: "/about",
+    link: "/about-us",
     stats: { value: "100+", label: "Projects Done" }
   },
   {
@@ -24,7 +24,7 @@ const slides = [
     subtitle: "Build Your Online Store",
     description: "Create powerful online stores with seamless payment integration, inventory management, and customer analytics to maximize your sales.",
     image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1920",
-    link: "/about",
+    link: "/about-us",
     stats: { value: "500+", label: "Stores Built" }
   },
   {
@@ -33,7 +33,7 @@ const slides = [
     subtitle: "Streamline Your Operations",
     description: "Integrate all your business processes with our comprehensive ERP solutions for better efficiency and real-time insights.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1920",
-    link: "/about",
+    link: "/about-us",
     stats: { value: "200+", label: "Implementations" }
   },
   {
@@ -42,7 +42,7 @@ const slides = [
     subtitle: "Professional Web Solutions",
     description: "Get a stunning, responsive website tailored to your business needs with modern design and optimal performance.",
     image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1920",
-    link: "/about",
+    link: "/about-us",
     stats: { value: "300+", label: "Websites" }
   },
   {
@@ -51,7 +51,7 @@ const slides = [
     subtitle: "Connect with Your Customers",
     description: "Integrate WhatsApp Business API to automate customer communication, send notifications, and provide instant support.",
     image: "https://images.unsplash.com/photo-1611532736579-6b16e2b50449?auto=format&fit=crop&q=80&w=1920",
-    link: "/about",
+    link: "/about-us",
     stats: { value: "1000+", label: "Integrations" }
   }
 ];

@@ -26,7 +26,7 @@ export default function PromoBar() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-4">
-          <Link to="/appointment" className="bg-primary text-white px-8 py-4 rounded-xl font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20 group">
+          <Link to="/customer-enquiry-form" className="bg-primary text-white px-8 py-4 rounded-xl font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20 group">
             <Calendar size={18} className="group-hover:rotate-12 transition-transform" /> 
             MAKE AN APPOINTMENT
           </Link>

@@ -31,13 +31,13 @@ export default function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/appointment" element={<Appointment />} />
+            <Route path="/about-us" element={<About />} />
+            <Route path="/customer-enquiry-form" element={<Appointment />} />
             <Route path="/ecommerce" element={<Ecommerce />} />
             <Route path="/business-design" element={<BusinessWebDesign />} />
             <Route path="/digital-showcase" element={<DigitalShowcase />} />
             <Route path="/career" element={<Career />} />
-            <Route path="/contact" element={<Contact />} />
+            <Route path="/contact-us" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-conditions/" element={<TermsAndConditions />} />
             <Route path="/refund-policy/" element={<RefundPolicy />} />

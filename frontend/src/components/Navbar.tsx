@@ -35,7 +35,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "About Us", href: "/about" },
+    { name: "About Us", href: "/about-us" },
     { 
       name: "Services", 
       href: "#", 
@@ -51,7 +51,7 @@ export default function Navbar() {
       dropdown: dynamicProducts
     },
     { name: "Career", href: "/career" },
-    { name: "Contact Us", href: "/contact" },
+    { name: "Contact Us", href: "/contact-us" },
   ];
 
   return (
@@ -92,7 +92,7 @@ export default function Navbar() {
               </div>
             ))}
             
-            <Link to="/appointment" className="bg-primary text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20">
+            <Link to="/customer-enquiry-form" className="bg-primary text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20">
               Get Started
             </Link>
           </div>
@@ -145,7 +145,7 @@ export default function Navbar() {
             </div>
           ))}
           <div className="pt-4">
-            <Link to="/appointment" onClick={() => setIsOpen(false)} className="block w-full bg-primary text-white py-3 rounded-xl font-semibold text-center">
+            <Link to="/customer-enquiry-form" onClick={() => setIsOpen(false)} className="block w-full bg-primary text-white py-3 rounded-xl font-semibold text-center">
               Get Started
             </Link>
           </div>
