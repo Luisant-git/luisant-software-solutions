@@ -40,8 +40,8 @@ export default function Navbar() {
       name: "Services", 
       href: "#", 
       dropdown: [
-        { name: "Ecommerce Application", href: "/ecommerce" },
-        { name: "Business Website Designing", href: "/business-design" },
+        { name: "Ecommerce Application", href: "/ecommerce-application" },
+        { name: "Business Website Designing", href: "/business-website-designing" },
         { name: "Digital Showcase", href: "/digital-showcase" }
       ] 
     },

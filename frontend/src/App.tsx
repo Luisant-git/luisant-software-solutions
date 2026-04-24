@@ -33,8 +33,8 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about-us" element={<About />} />
             <Route path="/customer-enquiry-form" element={<Appointment />} />
-            <Route path="/ecommerce" element={<Ecommerce />} />
-            <Route path="/business-design" element={<BusinessWebDesign />} />
+            <Route path="/ecommerce-application" element={<Ecommerce />} />
+            <Route path="/business-website-designing" element={<BusinessWebDesign />} />
             <Route path="/digital-showcase" element={<DigitalShowcase />} />
             <Route path="/career" element={<Career />} />
             <Route path="/contact-us" element={<Contact />} />
