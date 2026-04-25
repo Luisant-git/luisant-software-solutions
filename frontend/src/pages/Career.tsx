@@ -1,7 +1,8 @@
 import { motion } from "motion/react";
-import { Send, Upload, Heart, Coffee, Truck, Briefcase, GraduationCap, Headphones, Share2, CheckCircle, X } from "lucide-react";
-import { useState } from "react";
+import { Send, Upload, Heart, Coffee, Truck, Briefcase, GraduationCap, Headphones, Share2, CheckCircle, X, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
 import { careerApi } from "../lib/careerApi";
+import { captchaApi, CaptchaData } from "../lib/captchaApi";
 
 export default function Career() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ export default function Career() {
     resume: null as File | null,
   });
 
+  const [captcha, setCaptcha] = useState<CaptchaData | null>(null);
+  const [captchaInput, setCaptchaInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<"success" | "error">("success");
@@ -39,6 +42,20 @@ export default function Career() {
     }
   ];
 
+  useEffect(() => {
+    loadCaptcha();
+  }, []);
+
+  const loadCaptcha = async () => {
+    try {
+      const data = await captchaApi.generate();
+      setCaptcha(data);
+      setCaptchaInput("");
+    } catch (error) {
+      console.error('Failed to load CAPTCHA:', error);
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFormData({ ...formData, resume: e.target.files[0] });
@@ -47,9 +64,36 @@ export default function Career() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!captcha) {
+      setModalType("error");
+      setModalMessage("CAPTCHA not loaded. Please refresh.");
+      setShowModal(true);
+      return;
+    }
+
+    if (!captchaInput.trim()) {
+      setModalType("error");
+      setModalMessage("Please enter the CAPTCHA code.");
+      setShowModal(true);
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // Verify CAPTCHA first
+      const captchaResult = await captchaApi.verify(captcha.id, captchaInput);
+      
+      if (!captchaResult.valid) {
+        setModalType("error");
+        setModalMessage("Invalid CAPTCHA code. Please try again.");
+        setShowModal(true);
+        loadCaptcha();
+        setLoading(false);
+        return;
+      }
+
       const submitData = new FormData();
       submitData.append("name", formData.name);
       submitData.append("mobile", formData.mobile);
@@ -74,10 +118,12 @@ export default function Career() {
       setModalType("success");
       setModalMessage("Thank you for your application! We will review it and contact you shortly.");
       setShowModal(true);
+      loadCaptcha();
     } catch (error: any) {
       setModalType("error");
       setModalMessage(`Error: ${error.message}`);
       setShowModal(true);
+      loadCaptcha();
     } finally {
       setLoading(false);
     }
@@ -191,6 +237,34 @@ export default function Career() {
                             {formData.resume ? formData.resume.name : "Choose File"}
                           </span>
                         </label>
+                      </div>
+                    </div>
+
+                    {/* CAPTCHA Section */}
+                    <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100 mt-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Verify CAPTCHA:</label>
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
+                        {captcha && (
+                          <div className="flex gap-2 items-center shrink-0">
+                            <img src={captcha.image} alt="CAPTCHA" className="h-10 sm:h-12 w-auto border border-slate-200 rounded-lg bg-white p-0.5" />
+                            <button
+                              type="button"
+                              onClick={loadCaptcha}
+                              className="p-2 text-slate-400 hover:text-primary transition-colors shrink-0"
+                              title="Refresh CAPTCHA"
+                            >
+                              <RefreshCw size={16} />
+                            </button>
+                          </div>
+                        )}
+                        <input 
+                          type="text" 
+                          placeholder="Enter code above"
+                          required
+                          className="w-full sm:flex-grow px-3 sm:px-4 py-2 bg-white border border-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 font-medium text-xs sm:text-sm uppercase"
+                          value={captchaInput}
+                          onChange={(e) => setCaptchaInput(e.target.value)}
+                        />
                       </div>
                     </div>
                   </div>

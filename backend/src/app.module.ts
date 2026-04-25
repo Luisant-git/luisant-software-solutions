@@ -11,6 +11,7 @@ import { UploadModule } from './upload/upload.module';
 import { EmailModule } from './email/email.module';
 import { AppointmentModule } from './appointment/appointment.module';
 import { CareerModule } from './career/career.module';
+import { CaptchaModule } from './captcha/captcha.module';
 import { PrismaService } from './prisma/prisma.service';
 
 @Module({
@@ -29,6 +30,7 @@ import { PrismaService } from './prisma/prisma.service';
     EmailModule,
     AppointmentModule,
     CareerModule,
+    CaptchaModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

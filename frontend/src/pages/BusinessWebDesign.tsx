@@ -334,7 +334,7 @@ export default function BusinessWebDesign() {
               <div className="bg-white p-8 md:p-10 rounded-xl shadow-2xl border border-slate-100 flex flex-col justify-center">
                  <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-[#1C77C3] mb-2 uppercase tracking-tight">Contact Us for a Free Enquiry</h3>
-                    <div className="text-primary font-bold italic mb-6">Online / Offline Demo</div>
+                    <div className="text-primary font-bold mb-6">Online / Offline Demo</div>
                  </div>
                  <AppointmentForm defaultService="Business Website Designing" />
               </div>

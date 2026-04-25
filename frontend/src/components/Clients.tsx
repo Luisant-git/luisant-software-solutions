@@ -45,7 +45,7 @@ export default function Clients() {
       </div>
 
       <div className="relative">
-        <div className="flex animate-[marquee_30s_linear_infinite] whitespace-nowrap gap-8 md:gap-16 items-center">
+        <div className="flex animate-[marquee_20s_linear_infinite] whitespace-nowrap gap-8 md:gap-16 items-center">
           {displayList.map((client, i) => (
             <div key={i} className="flex flex-col items-center gap-4 transition-all cursor-default">
               <div className="w-40 md:w-56 h-20 md:h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center p-4 md:p-6 shadow-md overflow-hidden">

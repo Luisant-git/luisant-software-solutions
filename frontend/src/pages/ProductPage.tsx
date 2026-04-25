@@ -83,7 +83,7 @@ export default function ProductPage() {
               <div className="bg-slate-50 p-6 sm:p-8 md:p-12 rounded-xl border border-slate-100 shadow-inner lg:sticky lg:top-24 w-full">
                  <div className="text-center mb-8 sm:mb-10">
                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-secondary leading-tight mb-2">Book a Free Demo</h3>
-                   <div className="text-primary font-bold italic mb-4 sm:mb-6 text-sm sm:text-base">Online / Offline Demo</div>
+                   <div className="text-primary font-bold mb-4 sm:mb-6 text-sm sm:text-base">Online / Offline Demo</div>
                    <div className="w-32 h-1 bg-primary/20 mx-auto rounded-full" />
                  </div>
 

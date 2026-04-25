@@ -4,14 +4,43 @@
  */
 
 import { motion } from "motion/react";
-
-import client1 from "../images/clients/luisant-client1.png";
-import client2 from "../images/clients/luisant-client2.png";
-import client3 from "../images/clients/luisant-client3.png";
-import client4 from "../images/clients/luisant-client4.png";
+import { useEffect, useState } from "react";
+import { clientsApi, Client } from "../lib/clientsApi";
 import PromoBar from "../components/PromoBar";
 
+const STATIC_CLIENTS = [
+  "JK Agro Exporters",
+  "Sakthi Carton Industries",
+  "Sakthi Poly Films",
+  "SaaZ Fashions",
+  "Sunshine Constructions",
+  "Rajshree Sugars",
+  "Gemini Edibles",
+  "TVS Motors"
+];
+
 export default function About() {
+  const [clients, setClients] = useState<Client[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadClients = async () => {
+      try {
+        const data = await clientsApi.getPublic();
+        setClients(data);
+      } catch (error) {
+        console.error('Failed to load clients:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadClients();
+  }, []);
+
+  const displayList = clients.length > 0 
+    ? [...clients, ...clients] 
+    : STATIC_CLIENTS.map(name => ({ id: name, name, logo: '' })).concat(STATIC_CLIENTS.map(name => ({ id: name, name, logo: '' })));
+
   return (
     <div className="pt-16">
       {/* About Luisant Section */}
@@ -104,19 +133,37 @@ export default function About() {
             websites for clients all over the world.
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4">
-            {[
-              { name: "Cool Taxi", img: client1 },
-              { name: "Thulir", img: client2 },
-              { name: "SaaZ", img: client3 },
-              { name: "Sakthi", img: client4 }
-            ].map((client, i) => (
-              <div key={i} className="bg-white p-6 rounded-xl flex items-center justify-center shadow-lg hover:shadow-2xl transition-all duration-500 group">
-                <img src={client.img} alt={client.name} className="max-h-16 w-auto object-contain group-hover:scale-110 transition-transform" />
-              </div>
-            ))}
+          <div className="relative overflow-hidden">
+            <div className="flex animate-[marquee_20s_linear_infinite] whitespace-nowrap gap-8 md:gap-16 items-center">
+              {loading ? (
+                <div className="w-full text-center py-8 text-slate-300">Loading clients...</div>
+              ) : (
+                displayList.map((client, i) => (
+                  <div key={i} className="flex flex-col items-center gap-4 transition-all cursor-default">
+                    <div className="w-40 md:w-56 h-20 md:h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center p-4 md:p-6 shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                      {typeof client === "string" ? (
+                        <span className="text-lg md:text-xl font-black text-secondary/60 tracking-tighter italic text-center">{client}</span>
+                      ) : (
+                        client.logo ? (
+                          <img src={client.logo} alt={client.name} className="max-w-full max-h-full object-contain" />
+                        ) : (
+                          <span className="text-lg md:text-xl font-black text-secondary/60 tracking-tighter italic text-center">{client.name}</span>
+                        )
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
+
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+        `}} />
       </section>
     </div>
   );
