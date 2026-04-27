@@ -446,6 +446,17 @@ export default function Admin() {
                         </div>
                       ))}
                     </div>
+                    <div className="space-y-4 mt-8 pt-8 border-t border-slate-200">
+                      <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Redirect Button (Optional)</label>
+                      <div className="space-y-2">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Button Name</label>
+                        <input type="text" placeholder="e.g., Download Demo, Learn More" value={editingProduct.buttonName || ''} onChange={(e) => setEditingProduct({ ...editingProduct, buttonName: e.target.value })} className="w-full px-6 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Button URL</label>
+                        <input type="url" placeholder="https://example.com" value={editingProduct.buttonUrl || ''} onChange={(e) => setEditingProduct({ ...editingProduct, buttonUrl: e.target.value })} className="w-full px-6 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
+                      </div>
+                    </div>
                   </motion.div>
                 ) : <Placeholder text="product" />
               ) : (

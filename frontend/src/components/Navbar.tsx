@@ -38,7 +38,7 @@ export default function Navbar() {
     { name: "About Us", href: "/about-us" },
     { 
       name: "Services", 
-      href: "#", 
+      href: "/our-services", 
       dropdown: [
         { name: "Ecommerce Application", href: "/ecommerce-application" },
         { name: "Business Website Designing", href: "/business-website-designing" },
@@ -47,7 +47,7 @@ export default function Navbar() {
     },
     { 
       name: "Products", 
-      href: "#",
+      href: "/our-products",
       dropdown: dynamicProducts
     },
     { name: "Career", href: "/career" },
@@ -68,8 +68,7 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <div key={link.name} className="relative group">
                 <Link
-                  to={link.href === "#" ? "#" : link.href}
-                  onClick={(e) => link.href === "#" && e.preventDefault()}
+                  to={link.href}
                   className="text-[13px] xl:text-sm font-semibold text-slate-600 hover:text-primary transition-colors flex items-center gap-1 py-4 whitespace-nowrap"
                 >
                   {link.name}
@@ -93,7 +92,7 @@ export default function Navbar() {
             ))}
             
             <Link to="/customer-enquiry-form" className="bg-primary text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20">
-              Get Started
+              Free Demo
             </Link>
           </div>
 
@@ -116,14 +115,8 @@ export default function Navbar() {
           {navLinks.map((link) => (
             <div key={link.name}>
               <Link
-                to={link.href === "#" ? "#" : link.href}
-                onClick={(e) => {
-                  if (link.href === "#") {
-                    e.preventDefault();
-                  } else {
-                    setIsOpen(false);
-                  }
-                }}
+                to={link.href}
+                onClick={() => setIsOpen(false)}
                 className="block px-3 py-4 text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50 rounded-lg"
               >
                 {link.name}
@@ -146,7 +139,7 @@ export default function Navbar() {
           ))}
           <div className="pt-4">
             <Link to="/customer-enquiry-form" onClick={() => setIsOpen(false)} className="block w-full bg-primary text-white py-3 rounded-xl font-semibold text-center">
-              Get Started
+              Free Demo
             </Link>
           </div>
         </div>

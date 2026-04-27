@@ -23,15 +23,17 @@ model Admin {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  description String   @db.Text
-  points      String[] @default([])
-  adminId     String
-  admin       Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String   @db.Text
+  points          String[] @default([])
+  buttonName      String?
+  buttonUrl       String?
+  adminId         String
+  admin           Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@map("products")
 }

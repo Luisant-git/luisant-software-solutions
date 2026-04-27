@@ -23,6 +23,7 @@ import RefundPolicy from "./pages/RefundPolicy";
 import ScrollToTop from "./components/ScrollToTop";
 import Blog from "./pages/Blog";
 import OurServices from "./pages/OurServices";
+import OurProducts from "./pages/OurProducts";
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/our-services" element={<OurServices />} />
+            <Route path="/our-products" element={<OurProducts />} />
             <Route path="/web-design-in-salem" element={<Blog />} />
             <Route path="/web-design-in-namakkal" element={<Blog />} />
             <Route path="/web-design-in-dharmapuri" element={<Blog />} />

@@ -8,6 +8,8 @@ export interface Product {
   slug: string;
   description: string;
   points: string[];
+  buttonName?: string;
+  buttonUrl?: string;
   adminId: string;
   createdAt: string;
   updatedAt: string;
