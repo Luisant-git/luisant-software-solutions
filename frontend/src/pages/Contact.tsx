@@ -47,7 +47,7 @@ export default function Contact() {
   ];
 
   return (
-    <div className="pt-24 min-h-screen bg-slate-50/30">
+    <div className="pt-16 min-h-screen bg-slate-50/30">
       {/* PromoBar at Top */}
       <PromoBar />
 
