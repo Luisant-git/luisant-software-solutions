@@ -203,7 +203,7 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
             )}
             <input 
               type="text" 
-              placeholder="Enter code above"
+              placeholder="Enter code"
               required
               className="w-full sm:flex-grow px-3 sm:px-4 py-2 bg-white border border-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 font-medium text-xs sm:text-sm uppercase"
               value={captchaInput}
