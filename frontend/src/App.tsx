@@ -21,6 +21,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import RefundPolicy from "./pages/RefundPolicy";
 import ScrollToTop from "./components/ScrollToTop";
+import Blog from "./pages/Blog";
 
 export default function App() {
   return (
@@ -43,6 +44,14 @@ export default function App() {
             <Route path="/refund-policy/" element={<RefundPolicy />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/web-design-in-salem" element={<Blog />} />
+            <Route path="/web-design-in-namakkal" element={<Blog />} />
+            <Route path="/web-design-in-dharmapuri" element={<Blog />} />
+            <Route path="/web-design-in-krishnagiri" element={<Blog />} />
+            <Route path="/web-design-in-hosur" element={<Blog />} />
+            <Route path="/web-design-in-erode" element={<Blog />} />
+            <Route path="/web-design-in-tirupur" element={<Blog />} />
+            <Route path="/web-design-in-coimbatore" element={<Blog />} />
             <Route path="/product/:slug" element={<ProductPage />} />
           </Routes>
         </main>

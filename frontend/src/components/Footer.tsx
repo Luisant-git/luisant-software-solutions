@@ -40,7 +40,9 @@ export default function Footer() {
               {["Salem", "Namakkal", "Dharmapuri", "Krishnagiri", "Hosur", "Erode", "Tirupur", "Coimbatore"].map(city => (
                 <li key={city} className="flex items-center gap-3 hover:text-primary transition-colors cursor-pointer group">
                   <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all" />
-                  {city}
+                  <a href={`/web-design-in-${city.toLowerCase()}`} className="hover:text-primary transition-colors">
+                    {city}
+                  </a>
                 </li>
               ))}
             </ul>
