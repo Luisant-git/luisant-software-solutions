@@ -166,6 +166,7 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
               <option value="Website">Business Website Designing</option>
               <option value="Digital">Digital Showcase</option>
               <option value="Custom">Custom Web Design</option>
+              <option value="WhaSuite 360">WhaSuite 360</option>
             </select>
             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
