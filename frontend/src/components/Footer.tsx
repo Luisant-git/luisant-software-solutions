@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram, ArrowRight } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Linkedin, Instagram, Youtube, ArrowRight } from "lucide-react";
 import logo from "../images/logo-luisant-software-solutions.png";
 
 export default function Footer() {
@@ -23,9 +23,14 @@ export default function Footer() {
               Luisant Software Solutions is an innovative technology industry focused, business driven professional services firm. We solve and manage client's needs intelligently.
             </p>
             <div className="flex gap-4">
-              {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
-                <a key={i} href="#" className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white hover:border-primary transition-all">
-                  <Icon size={18} />
+              {[
+                { Icon: Facebook, url: "https://www.facebook.com/LuisantSoftwares/" },
+                { Icon: Linkedin, url: "https://in.linkedin.com/company/luisant-software-solutions" },
+                { Icon: Instagram, url: "https://www.instagram.com/luisantsoft/" },
+                { Icon: Youtube, url: "https://www.youtube.com/@luisantsoftwaresolutions5168" }
+              ].map((social, i) => (
+                <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                  <social.Icon size={18} />
                 </a>
               ))}
             </div>
