@@ -4,7 +4,7 @@
  */
 
 import { Mail, Phone, MapPin, Facebook, Linkedin, Instagram, Youtube, ArrowRight } from "lucide-react";
-import logo from "../images/logo-luisant-software-solutions.png";
+import logo from "../images/logo-luisant-software-solutions1.png";
 
 export default function Footer() {
   return (
@@ -16,8 +16,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-8">
-              <img src={logo} alt="Luisant Software Solutions" className="h-12 w-auto object-contain brightness-0 invert" />
+            <div className="flex items-center gap-2 mb-4">
+              <img src={logo} alt="Luisant Software Solutions" className="h-16 w-auto object-contain -ml-4" />
             </div>
             <p className="text-slate-400 leading-relaxed mb-8">
               Luisant Software Solutions is an innovative technology industry focused, business driven professional services firm. We solve and manage client's needs intelligently.
