@@ -19,6 +19,7 @@ import {
 import { Link } from "react-router-dom";
 import AppointmentForm from "../components/AppointmentForm";
 import PromoBar from "../components/PromoBar";
+import digitalShowcaseImg from "../images/digitalshowcase.png";
 
 const BENEFITS = [
   { 
@@ -51,8 +52,17 @@ const BENEFITS = [
 export default function DigitalShowcase() {
   return (
     <div className="pt-16 min-h-screen bg-white">
-      {/* CTA Strip */}
-      <PromoBar />
+      {/* Hero Banner */}
+      <section className="w-full bg-white">
+        <img 
+          src={digitalShowcaseImg} 
+          alt="Digital Showcase" 
+          className="w-full h-auto object-cover"
+        />
+      </section>
+
+      {/* CTA Strip
+      <PromoBar /> */}
 
       {/* Main Content */}
       <section className="py-12 md:py-20 bg-white">

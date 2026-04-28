@@ -30,6 +30,7 @@ model Product {
   points          String[] @default([])
   buttonName      String?
   buttonUrl       String?
+  banner          String?  @db.Text
   adminId         String
   admin           Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())

@@ -61,6 +61,15 @@ export default function OurProducts() {
               viewport={{ once: true }}
               className="border-b border-slate-100 pb-12 last:border-b-0 last:pb-0"
             >
+              {product.banner && (
+                <div className="mb-8 rounded-xl overflow-hidden shadow-lg">
+                  <img 
+                    src={product.banner} 
+                    alt={product.name} 
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+              )}
               <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
                 <div className="lg:col-span-7 w-full min-w-0">
                   <motion.div 

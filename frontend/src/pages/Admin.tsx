@@ -98,6 +98,7 @@ export default function Admin() {
       slug: "",
       description: "",
       points: [""],
+      banner: "",
       adminId: "",
       createdAt: "",
       updatedAt: "",
@@ -197,6 +198,21 @@ export default function Admin() {
       alert(error.message || 'Failed to delete client');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && editingProduct) {
+      try {
+        setLoading(true);
+        const result = await uploadApi.uploadFile(file);
+        setEditingProduct({ ...editingProduct, banner: result.url });
+      } catch (error: any) {
+        alert(error.message || 'Failed to upload banner');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -445,6 +461,17 @@ export default function Admin() {
                           <button onClick={() => setEditingProduct({ ...editingProduct, points: editingProduct.points?.filter((_, i) => i !== idx) })} className="text-slate-300 hover:text-red-500"><Trash2 size={18} /></button>
                         </div>
                       ))}
+                    </div>
+                    <div className="space-y-4 mt-8 pt-8 border-t border-slate-200">
+                      <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Product Banner (Optional)</label>
+                      <div className="flex items-center gap-6">
+                        <div className="w-full h-40 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
+                          {editingProduct.banner ? <img src={editingProduct.banner} className="w-full h-full object-cover" /> : <ImageIcon size={32} className="text-slate-200" />}
+                        </div>
+                      </div>
+                      <input type="file" accept="image/*" onChange={handleBannerUpload} className="hidden" id="banner-upload" />
+                      <label htmlFor="banner-upload" className="inline-block bg-slate-100 text-slate-600 px-6 py-3 rounded-xl font-bold cursor-pointer hover:bg-slate-200 transition-all">UPLOAD BANNER IMAGE</label>
+                      <p className="mt-2 text-xs text-slate-400">Recommended: Wide format image (1200x400px or similar)</p>
                     </div>
                     <div className="space-y-4 mt-8 pt-8 border-t border-slate-200">
                       <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Redirect Button (Optional)</label>

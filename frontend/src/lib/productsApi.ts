@@ -10,6 +10,7 @@ export interface Product {
   points: string[];
   buttonName?: string;
   buttonUrl?: string;
+  banner?: string;
   adminId: string;
   createdAt: string;
   updatedAt: string;
