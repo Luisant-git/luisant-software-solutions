@@ -78,7 +78,7 @@ export default function OurProducts() {
                     viewport={{ once: true }}
                     className="w-full"
                   >
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-secondary mb-6 sm:mb-8 uppercase tracking-tighter break-words">
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-secondary mb-6 sm:mb-8 tracking-tighter break-words">
                       {product.name}
                     </h2>
                     

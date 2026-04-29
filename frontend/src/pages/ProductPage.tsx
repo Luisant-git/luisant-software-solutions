@@ -55,7 +55,7 @@ export default function ProductPage() {
                  animate={{ opacity: 1, y: 0 }}
                  className="w-full"
                >
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-secondary mb-6 sm:mb-8 uppercase tracking-tighter break-words">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-secondary mb-6 sm:mb-8 tracking-tighter break-words">
                     {product.name}
                   </h1>
                   

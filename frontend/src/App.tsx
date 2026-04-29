@@ -23,6 +23,7 @@ import RefundPolicy from "./pages/RefundPolicy";
 import ScrollToTop from "./components/ScrollToTop";
 import Blog from "./pages/Blog";
 import OurServices from "./pages/OurServices";
+import WhatsAppButton from "./components/WhatsAppButton";
 import OurProducts from "./pages/OurProducts";
 
 export default function App() {
@@ -60,6 +61,7 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
+        <WhatsAppButton />
       </div>
     </Router>
   );
