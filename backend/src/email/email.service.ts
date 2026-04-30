@@ -28,8 +28,8 @@ export class EmailService {
   }): Promise<boolean> {
     try {
       const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER,
+        from: appointmentData.email,
+        to: 'info@luisantsoftwares.com',
         subject: `New Appointment Request - ${appointmentData.name}`,
         html: `
           <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; background-color: #f8f9fa;">
@@ -146,8 +146,8 @@ export class EmailService {
   }): Promise<boolean> {
     try {
       const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER,
+        from: careerData.email,
+        to: 'info@luisantsoftwares.com',
         subject: `New Career Application - ${careerData.name}`,
         html: `
           <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; background-color: #f8f9fa;">
