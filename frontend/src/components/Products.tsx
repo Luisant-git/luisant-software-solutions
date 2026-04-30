@@ -18,7 +18,8 @@ const ICON_MAP: { [key: string]: any } = {
   "showcase": Zap,
   "analytics": BarChart3,
   "erp": LayoutDashboard,
-  "whatsapp": MessageCircle
+  "whatsapp": MessageCircle,
+  "whasuite 360": MessageCircle
 };
 
 const getIconForProduct = (productName: string) => {
