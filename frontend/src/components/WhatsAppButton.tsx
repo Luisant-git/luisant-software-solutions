@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MessageCircle } from "lucide-react";
+import { Phone } from "lucide-react";
 import { motion } from "motion/react";
 
 export default function WhatsAppButton() {
@@ -21,7 +21,7 @@ export default function WhatsAppButton() {
       whileTap={{ scale: 0.95 }}
       className="fixed bottom-8 right-8 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg shadow-green-500/50 transition-all flex items-center justify-center group"
     >
-      <MessageCircle size={28} />
+      <Phone size={28} />
       <span className="absolute right-16 bg-green-500 text-white px-3 py-2 rounded-lg text-sm font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
         Chat with us
       </span>

@@ -4,9 +4,52 @@
  */
 
 import { motion } from "motion/react";
-import { CheckCircle2, Monitor, Database } from "lucide-react";
+import { Monitor, Database, ShoppingCart, Globe, Smartphone, Zap, BarChart3, LayoutDashboard, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { productsApi, Product } from "../lib/productsApi";
+import { Link } from "react-router-dom";
+
+const ICON_MAP: { [key: string]: any } = {
+  "billing": Monitor,
+  "microfin": Database,
+  "ecommerce": ShoppingCart,
+  "website": Globe,
+  "mobile": Smartphone,
+  "showcase": Zap,
+  "analytics": BarChart3,
+  "erp": LayoutDashboard,
+  "whatsapp": MessageCircle
+};
+
+const getIconForProduct = (productName: string) => {
+  const lowerName = productName.toLowerCase();
+  for (const [key, icon] of Object.entries(ICON_MAP)) {
+    if (lowerName.includes(key)) {
+      return icon;
+    }
+  }
+  return Monitor;
+};
 
 export default function Products() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await productsApi.getPublic();
+        setProducts(data.slice(0, 2));
+      } catch (error) {
+        console.error('Failed to load products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
+
   return (
     <section className="py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,40 +63,38 @@ export default function Products() {
             </p>
 
             <div className="space-y-6">
-              {[
-                {
-                  icon: Monitor,
-                  title: "Billing Software",
-                  desc: "Comprehensive solution for sales, inventory, and accounting."
-                },
-                {
-                  icon: Database,
-                  title: "MicroFin Manager",
-                  desc: "Specialized tool for microfinance institutions to manage loans and audits."
-                }
-              ].map((item, i) => (
-                <motion.div 
-                  key={item.title}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.2 }}
-                  className="flex gap-6 p-6 rounded-xl bg-white border border-slate-100 items-start group shadow-lg hover:shadow-xl transition-all"
-                >
-                  <div className="w-14 h-14 bg-primary rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center text-white transition-transform">
-                    <item.icon size={28} />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-secondary mb-1">{item.title}</h4>
-                    <p className="text-slate-500 text-sm font-medium">{item.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
+              {loading ? (
+                <div className="text-slate-400">Loading products...</div>
+              ) : products.length === 0 ? (
+                <div className="text-slate-400">No products available</div>
+              ) : (
+                products.map((product, i) => (
+                  <motion.div 
+                    key={product.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.2 }}
+                    className="flex gap-6 p-6 rounded-xl bg-white border border-slate-100 items-start group shadow-lg hover:shadow-xl transition-all"
+                  >
+                    <div className="w-12 h-12 bg-primary rounded-lg shadow-lg shadow-primary/20 flex items-center justify-center text-white transition-transform flex-shrink-0">
+                      {(() => {
+                        const IconComponent = getIconForProduct(product.name);
+                        return <IconComponent size={24} />;
+                      })()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-lg font-bold text-secondary mb-1 truncate">{product.name}</h4>
+                      <p className="text-slate-500 text-sm font-medium line-clamp-2">{product.description}</p>
+                    </div>
+                  </motion.div>
+                ))
+              )}
             </div>
 
-            <button className="mt-12 bg-secondary text-white px-8 py-4 rounded-xl font-bold hover:shadow-xl transition-all active:scale-95">
+            <Link to="/our-products" className="mt-12 bg-secondary text-white px-8 py-4 rounded-xl font-bold hover:shadow-xl transition-all active:scale-95 inline-block">
               View All Products
-            </button>
+            </Link>
           </div>
 
           {/* Visuals */}
