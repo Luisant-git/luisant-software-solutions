@@ -50,6 +50,7 @@ export default function Navbar() {
       href: "/our-products",
       dropdown: dynamicProducts
     },
+    { name: "Portfolio", href: "/portfolio" },
     { name: "Career", href: "/career" },
     { name: "Contact Us", href: "/contact-us" },
   ];

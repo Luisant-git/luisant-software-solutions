@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon, Briefcase, Download, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon, Briefcase, Download, Search, ChevronLeft, ChevronRight, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../lib/authApi";
 import { productsApi, Product } from "../lib/productsApi";
 import { clientsApi, Client } from "../lib/clientsApi";
 import { uploadApi } from "../lib/uploadApi";
 import { careersApi, Career } from "../lib/careersApi";
+import { portfolioApi, Portfolio } from "../lib/portfolioApi";
+import PortfolioAdmin from "../components/PortfolioAdmin";
 
 export default function Admin() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<"products" | "clients" | "careers">("products");
+  const [activeTab, setActiveTab] = useState<"products" | "clients" | "careers" | "portfolio">("products");
   const [loading, setLoading] = useState(false);
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -21,6 +23,8 @@ export default function Admin() {
   const [editingClient, setEditingClient] = useState<Partial<Client> | null>(null);
 
   const [careers, setCareers] = useState<Career[]>([]);
+  const [editingPortfolio, setEditingPortfolio] = useState<Partial<Portfolio> | null>(null);
+  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -33,6 +37,7 @@ export default function Admin() {
       loadProducts();
       loadClients();
       loadCareers();
+      loadPortfolios();
     }
   }, [navigate]);
 
@@ -68,6 +73,18 @@ export default function Admin() {
       setCurrentPage(1);
     } catch (error) {
       console.error('Failed to load careers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadPortfolios = async () => {
+    try {
+      setLoading(true);
+      const data = await portfolioApi.getAll();
+      setPortfolios(data);
+    } catch (error) {
+      console.error('Failed to load portfolios:', error);
     } finally {
       setLoading(false);
     }
@@ -265,6 +282,13 @@ export default function Admin() {
                 <Briefcase size={16} />
                 CAREERS
               </button>
+              <button 
+                onClick={() => { setActiveTab("portfolio"); setEditingProduct(null); setEditingClient(null); setEditingPortfolio(null); }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === "portfolio" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+              >
+                <Palette size={16} />
+                PORTFOLIO
+              </button>
             </div>
           </div>
           <button 
@@ -381,6 +405,8 @@ export default function Admin() {
               </>
             )}
           </div>
+        ) : activeTab === "portfolio" ? (
+          <PortfolioAdmin />
         ) : (
           <div className="grid lg:grid-cols-12 gap-10">
             <div className="lg:col-span-4 space-y-4">
@@ -429,88 +455,88 @@ export default function Admin() {
             <div className="lg:col-span-8">
               {activeTab === "products" ? (
                 editingProduct ? (
-                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-8">
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-6 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-6">
                       <button onClick={handleSaveProduct} disabled={loading} className="bg-primary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
                         <Save size={18} /> {loading ? 'SAVING...' : 'SAVE CHANGES'}
                       </button>
                     </div>
-                    <h2 className="text-2xl font-black text-secondary mb-10 uppercase tracking-tight italic">Product Editor</h2>
-                    <div className="grid md:grid-cols-2 gap-6 mb-8 text-secondary">
-                      <div className="space-y-2">
-                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Product Name</label>
-                        <input type="text" value={editingProduct.name || ''} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                    <h2 className="text-xl font-black text-secondary mb-6 uppercase tracking-tight italic">Product Editor</h2>
+                    <div className="grid md:grid-cols-2 gap-4 mb-6 text-secondary">
+                      <div className="space-y-1">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Product Name</label>
+                        <input type="text" value={editingProduct.name || ''} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })} className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest">URL Slug</label>
-                        <input type="text" value={editingProduct.slug || ''} onChange={(e) => setEditingProduct({ ...editingProduct, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                      <div className="space-y-1">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">URL Slug</label>
+                        <input type="text" value={editingProduct.slug || ''} onChange={(e) => setEditingProduct({ ...editingProduct, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
                       </div>
                     </div>
-                    <div className="space-y-2 mb-8 text-secondary">
-                      <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Description</label>
-                      <textarea rows={4} value={editingProduct.description || ''} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                    <div className="space-y-1 mb-6 text-secondary">
+                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Description</label>
+                      <textarea rows={3} value={editingProduct.description || ''} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Feature Points</label>
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Feature Points</label>
                         <button onClick={addPointField} className="text-xs font-black text-primary uppercase tracking-widest hover:underline">+ Add Point</button>
                       </div>
                       {editingProduct.points?.map((point, idx) => (
                         <div key={idx} className="flex gap-2">
-                          <input type="text" value={point} onChange={(e) => updatePoint(idx, e.target.value)} className="flex-grow px-6 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
-                          <button onClick={() => setEditingProduct({ ...editingProduct, points: editingProduct.points?.filter((_, i) => i !== idx) })} className="text-slate-300 hover:text-red-500"><Trash2 size={18} /></button>
+                          <input type="text" value={point} onChange={(e) => updatePoint(idx, e.target.value)} className="flex-grow px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
+                          <button onClick={() => setEditingProduct({ ...editingProduct, points: editingProduct.points?.filter((_, i) => i !== idx) })} className="text-slate-300 hover:text-red-500"><Trash2 size={16} /></button>
                         </div>
                       ))}
                     </div>
-                    <div className="space-y-4 mt-8 pt-8 border-t border-slate-200">
-                      <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Product Banner (Optional)</label>
+                    <div className="space-y-2 mt-6 pt-6 border-t border-slate-200">
+                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Product Banner (Optional)</label>
                       <div className="flex items-center gap-6">
                         <div className="w-full h-40 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
                           {editingProduct.banner ? <img src={editingProduct.banner} className="w-full h-full object-cover" /> : <ImageIcon size={32} className="text-slate-200" />}
                         </div>
                       </div>
                       <input type="file" accept="image/*" onChange={handleBannerUpload} className="hidden" id="banner-upload" />
-                      <label htmlFor="banner-upload" className="inline-block bg-slate-100 text-slate-600 px-6 py-3 rounded-xl font-bold cursor-pointer hover:bg-slate-200 transition-all">UPLOAD BANNER IMAGE</label>
-                      <p className="mt-2 text-xs text-slate-400">Recommended: Wide format image (1200x400px or similar)</p>
+                      <label htmlFor="banner-upload" className="inline-block bg-slate-100 text-slate-600 px-4 py-2 text-sm rounded-xl font-bold cursor-pointer hover:bg-slate-200 transition-all">UPLOAD BANNER IMAGE</label>
+                      <p className="mt-1 text-xs text-slate-400">Recommended: Wide format image (1200x400px or similar)</p>
                     </div>
-                    <div className="space-y-4 mt-8 pt-8 border-t border-slate-200">
-                      <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Redirect Button (Optional)</label>
-                      <div className="space-y-2">
+                    <div className="space-y-2 mt-6 pt-6 border-t border-slate-200">
+                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Redirect Button (Optional)</label>
+                      <div className="space-y-1">
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Button Name</label>
-                        <input type="text" placeholder="e.g., Download Demo, Learn More" value={editingProduct.buttonName || ''} onChange={(e) => setEditingProduct({ ...editingProduct, buttonName: e.target.value })} className="w-full px-6 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
+                        <input type="text" placeholder="e.g., Download Demo, Learn More" value={editingProduct.buttonName || ''} onChange={(e) => setEditingProduct({ ...editingProduct, buttonName: e.target.value })} className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Button URL</label>
-                        <input type="url" placeholder="https://example.com" value={editingProduct.buttonUrl || ''} onChange={(e) => setEditingProduct({ ...editingProduct, buttonUrl: e.target.value })} className="w-full px-6 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
+                        <input type="url" placeholder="https://example.com" value={editingProduct.buttonUrl || ''} onChange={(e) => setEditingProduct({ ...editingProduct, buttonUrl: e.target.value })} className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
                       </div>
                     </div>
                   </motion.div>
                 ) : <Placeholder text="product" />
               ) : (
                 editingClient ? (
-                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-8">
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-6 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-6">
                       <button onClick={handleSaveClient} disabled={loading} className="bg-primary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
                         <Save size={18} /> {loading ? 'SAVING...' : 'SAVE CHANGES'}
                       </button>
                     </div>
-                    <h2 className="text-2xl font-black text-secondary mb-10 uppercase tracking-tight italic">Client Editor</h2>
-                    <div className="space-y-6 text-secondary">
-                      <div className="space-y-2">
-                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Client Name</label>
-                        <input type="text" value={editingClient.name || ''} onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })} className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
+                    <h2 className="text-xl font-black text-secondary mb-6 uppercase tracking-tight italic">Client Editor</h2>
+                    <div className="space-y-4 text-secondary">
+                      <div className="space-y-1">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Client Name</label>
+                        <input type="text" value={editingClient.name || ''} onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })} className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none text-secondary" />
                       </div>
                       
-                      <div className="space-y-4">
-                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest">Client Logo</label>
+                      <div className="space-y-2">
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Client Logo</label>
                         <div className="flex items-center gap-6">
                           <div className="w-32 h-32 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
                             {editingClient.logo ? <img src={editingClient.logo} className="w-full h-full object-contain p-2" /> : <ImageIcon size={32} className="text-slate-200" />}
                           </div>
                           <div className="flex-grow">
                             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="logo-upload" />
-                            <label htmlFor="logo-upload" className="inline-block bg-slate-100 text-slate-600 px-6 py-3 rounded-xl font-bold cursor-pointer hover:bg-slate-200 transition-all">UPLOAD LOGO IMAGE</label>
-                            <p className="mt-2 text-xs text-slate-400">Recommended: Square PNG with transparent background</p>
+                            <label htmlFor="logo-upload" className="inline-block bg-slate-100 text-slate-600 px-4 py-2 text-sm rounded-xl font-bold cursor-pointer hover:bg-slate-200 transition-all">UPLOAD LOGO IMAGE</label>
+                            <p className="mt-1 text-xs text-slate-400">Recommended: Square PNG with transparent background</p>
                           </div>
                         </div>
                       </div>

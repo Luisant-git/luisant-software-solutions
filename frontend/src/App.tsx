@@ -25,6 +25,8 @@ import Blog from "./pages/Blog";
 import OurServices from "./pages/OurServices";
 import WhatsAppButton from "./components/WhatsAppButton";
 import OurProducts from "./pages/OurProducts";
+import Portfolio from "./pages/Portfolio";
+import PortfolioDetail from "./pages/PortfolioDetail";
 
 export default function App() {
   return (
@@ -57,6 +59,8 @@ export default function App() {
             <Route path="/web-design-in-erode" element={<Blog />} />
             <Route path="/web-design-in-tirupur" element={<Blog />} />
             <Route path="/web-design-in-coimbatore" element={<Blog />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/portfolio/:slug" element={<PortfolioDetail />} />
             <Route path="/product/:slug" element={<ProductPage />} />
           </Routes>
         </main>

@@ -16,8 +16,9 @@ model Admin {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  products  Product[]
-  clients   Client[]
+  products   Product[]
+  clients    Client[]
+  portfolios Portfolio[]
 
   @@map("admins")
 }
@@ -63,4 +64,26 @@ model Career {
   updatedAt DateTime @updatedAt
 
   @@map("careers")
+}
+
+model Portfolio {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  category    String
+  image       String   @db.Text
+  images      String[] @default([])
+  clientName  String?
+  technologies String[] @default([])
+  features    String[] @default([])
+  link        String?
+  caseStudy   String?  @db.Text
+  results     String[] @default([])
+  adminId     String
+  admin       Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("portfolios")
 }

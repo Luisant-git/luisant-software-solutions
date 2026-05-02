@@ -41,7 +41,7 @@ export default function Products() {
       try {
         setLoading(true);
         const data = await productsApi.getPublic();
-        setProducts(data.slice(0, 2));
+        setProducts(data.slice(0, 4));
       } catch (error) {
         console.error('Failed to load products:', error);
       } finally {
@@ -92,10 +92,6 @@ export default function Products() {
                 ))
               )}
             </div>
-
-            <Link to="/our-products" className="mt-12 bg-secondary text-white px-8 py-4 rounded-xl font-bold hover:shadow-xl transition-all active:scale-95 inline-block">
-              View All Products
-            </Link>
           </div>
 
           {/* Visuals */}
