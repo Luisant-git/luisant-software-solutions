@@ -27,7 +27,7 @@ export default function Appointment() {
                   { icon: Phone, label: "Call Us", val: "+91 427 405 6538" },
                   { icon: Mail, label: "Email Us", val: "info@luisantsoftwares.com" },
                   { icon: MapPin, label: "Location", val: "Salem, Tamil Nadu" },
-                  { icon: Clock, label: "Mon - Sat", val: "9:00 AM - 6:00 PM" }
+                  { icon: Clock, label: "Mon - Sat", val: "9:30 AM - 7:30 PM" }
                 ].map((item, i) => (
                   <div key={i} className="flex gap-3 items-center lg:items-start lg:gap-4">
                     <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/20">
