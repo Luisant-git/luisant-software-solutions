@@ -74,7 +74,7 @@ export default function PortfolioCard({ portfolio, index }: PortfolioCardProps) 
 
           {/* Description */}
           <p className="text-slate-600 text-sm sm:text-base mb-4 line-clamp-2 leading-relaxed">
-            {portfolio.description}
+            {descriptionPreview}
           </p>
 
           {/* Technologies */}

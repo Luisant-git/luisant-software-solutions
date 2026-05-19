@@ -86,7 +86,15 @@ export default function Products() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-lg font-bold text-secondary mb-1 truncate">{product.name}</h4>
-                      <p className="text-slate-500 text-sm font-medium line-clamp-2">{product.description}</p>
+                      <p className="text-slate-500 text-sm font-medium line-clamp-2">
+                        {(() => {
+                          if (!product.description) return "";
+                          const tempDiv = document.createElement('div');
+                          tempDiv.innerHTML = product.description;
+                          const text = tempDiv.textContent || tempDiv.innerText || "";
+                          return text.replace(/\s+/g, ' ').trim();
+                        })()}
+                      </p>
                     </div>
                   </motion.div>
                 ))

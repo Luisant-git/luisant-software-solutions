@@ -59,9 +59,10 @@ export default function ProductPage() {
                     {product.name}
                   </h1>
                   
-                  <p className="text-base sm:text-lg text-slate-600 mb-10 leading-relaxed font-medium break-words">
-                    {product.description}
-                  </p>
+                  <div 
+                    className="text-base sm:text-lg text-slate-600 mb-10 leading-relaxed font-medium break-words prose max-w-none prose-slate"
+                    dangerouslySetInnerHTML={{ __html: product.description || '' }}
+                  />
 
                   {((product.points && product.points.filter(p => p.trim() !== "").length > 0) || (product.buttonName?.trim() && product.buttonUrl?.trim())) && (
                     <div className="bg-slate-50 p-6 sm:p-8 rounded-xl border border-slate-100 shadow-lg w-full overflow-hidden">

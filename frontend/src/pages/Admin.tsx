@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon, Briefcase, Download, Search, ChevronLeft, ChevronRight, Palette, Edit3 } from "lucide-react";
+import { Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon, Briefcase, Download, Search, ChevronLeft, ChevronRight, Palette, Edit3, Bold, Italic, List, ListOrdered, Link2, AlignLeft, AlignCenter, AlignRight, AlignJustify } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../lib/authApi";
 import { productsApi, Product } from "../lib/productsApi";
@@ -29,6 +29,87 @@ export default function Admin() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const productDescriptionRef = useRef<HTMLDivElement | null>(null);
+  const productSelectionRef = useRef<Range | null>(null);
+
+  // selectionchange listener to keep track of cursor selection
+  useEffect(() => {
+    const onSelectionChange = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+      const range = selection.getRangeAt(0);
+      if (!productDescriptionRef.current?.contains(selection.anchorNode)) return;
+      productSelectionRef.current = range.cloneRange();
+    };
+
+    document.addEventListener("selectionchange", onSelectionChange);
+    return () => document.removeEventListener("selectionchange", onSelectionChange);
+  }, []);
+
+  // Update editor innerHTML when editingProduct changes
+  useEffect(() => {
+    if (!productDescriptionRef.current) return;
+    if (!editingProduct) {
+      productDescriptionRef.current.innerHTML = "";
+      return;
+    }
+
+    const descriptionHtml = editingProduct.description || "<p><br></p>";
+    if (productDescriptionRef.current.innerHTML !== descriptionHtml) {
+      productDescriptionRef.current.innerHTML = descriptionHtml;
+    }
+  }, [editingProduct?.id, !!editingProduct]);
+
+  const saveProductEditorSelection = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    const anchorNode = selection.anchorNode;
+    const focusNode = selection.focusNode;
+    if (
+      !productDescriptionRef.current?.contains(anchorNode) &&
+      !productDescriptionRef.current?.contains(focusNode)
+    ) {
+      return;
+    }
+    productSelectionRef.current = range.cloneRange();
+  };
+
+  const execProductEditorCommand = (command: string, value?: string) => {
+    if (!productDescriptionRef.current) return;
+
+    productDescriptionRef.current.focus();
+
+    // ensure formatBlock block exists
+    document.execCommand("formatBlock", false, "p");
+
+    if (productSelectionRef.current) {
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(productSelectionRef.current);
+      }
+    }
+
+    if (command === "createLink") {
+      const url = window.prompt("Enter URL", "https://");
+      if (!url) return;
+      document.execCommand("createLink", false, url);
+    } else {
+      document.execCommand(command, false, value ?? null);
+    }
+
+    const html = productDescriptionRef.current.innerHTML;
+    setEditingProduct({ ...editingProduct!, description: html });
+  };
+
+  const handleProductDescriptionInput = () => {
+    if (!productDescriptionRef.current || !editingProduct) return;
+    const html = productDescriptionRef.current.innerHTML;
+    setEditingProduct({ ...editingProduct, description: html });
+    saveProductEditorSelection();
+  };
 
   useEffect(() => {
     if (!authApi.isAuthenticated()) {
@@ -461,11 +542,29 @@ export default function Admin() {
                   <div className="text-center py-10 text-slate-400 italic">No clients added yet.</div>
                 )}
                 {!loading && activeTab === "products" && products.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 group transition-all hover:shadow-md">
-                    <span className="font-bold text-secondary truncate mr-4">{p.name}</span>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => setEditingProduct(p)} className="p-2 text-slate-400 hover:text-primary transition-colors">Edit</button>
-                      <button onClick={() => handleDeleteProduct(p.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                  <div key={p.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+                    <div className="min-w-0">
+                      <div className="font-bold text-secondary truncate">{p.name}</div>
+                      <div className="text-xs text-slate-400 mt-1">/{p.slug}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setEditingProduct(p)}
+                        className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all cursor-pointer z-10"
+                        title="Edit product"
+                      >
+                        <Edit3 size={16} className="pointer-events-none" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteProduct(p.id);
+                        }}
+                        className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all cursor-pointer z-10"
+                        title="Delete product"
+                      >
+                        <Trash2 size={16} className="pointer-events-none" />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -526,8 +625,144 @@ export default function Admin() {
                       </div>
                     </div>
                     <div className="space-y-1 mb-6 text-secondary">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Description</label>
-                      <textarea rows={3} value={editingProduct.description || ''} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                      <div className="flex flex-col gap-3">
+                        <div>
+                          <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Description</label>
+                          <p className="text-[10px] sm:text-xs text-slate-500 mt-1">Use the toolbar to format the product description.</p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-slate-100 p-2">
+                          <select
+                            onMouseDown={saveProductEditorSelection}
+                            onChange={(e) => execProductEditorCommand("fontSize", e.target.value)}
+                            className="h-9 rounded-xl border border-slate-200 bg-white px-2.5 text-xs sm:text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            defaultValue="3"
+                          >
+                            <option value="2">12</option>
+                            <option value="3">14</option>
+                            <option value="4">16</option>
+                            <option value="5">18</option>
+                            <option value="6">20</option>
+                          </select>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("formatBlock", "<h1>")}
+                            className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                          >
+                            H1
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("formatBlock", "<h2>")}
+                            className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                          >
+                            H2
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("formatBlock", "<p>")}
+                            className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                          >
+                            Normal
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("bold")}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                            title="Bold"
+                          >
+                            <Bold size={15} />
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("italic")}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                            title="Italic"
+                          >
+                            <Italic size={15} />
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("underline")}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                            title="Underline"
+                          >
+                            <u className="text-base font-bold">U</u>
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("justifyLeft")}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                            title="Align left"
+                          >
+                            <AlignLeft size={15} />
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("justifyCenter")}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                            title="Align center"
+                          >
+                            <AlignCenter size={15} />
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("justifyRight")}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                            title="Align right"
+                          >
+                            <AlignRight size={15} />
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("insertUnorderedList")}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                            title="Bullet list"
+                          >
+                            <List size={15} />
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("insertOrderedList")}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                            title="Numbered list"
+                          >
+                            <ListOrdered size={15} />
+                          </button>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); saveProductEditorSelection(); }}
+                            onClick={() => execProductEditorCommand("createLink")}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
+                            title="Insert link"
+                          >
+                            <Link2 size={15} />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="rounded-2xl border border-slate-200 bg-slate-50 shadow-sm mt-2">
+                        <div
+                          ref={productDescriptionRef}
+                          contentEditable
+                          suppressContentEditableWarning
+                          onInput={handleProductDescriptionInput}
+                          onBlur={handleProductDescriptionInput}
+                          onFocus={saveProductEditorSelection}
+                          onMouseUp={saveProductEditorSelection}
+                          onKeyUp={saveProductEditorSelection}
+                          className="min-h-[160px] w-full px-4 py-3 text-sm bg-transparent outline-none whitespace-pre-wrap text-secondary"
+                        />
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">

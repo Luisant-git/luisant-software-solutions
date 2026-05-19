@@ -82,9 +82,10 @@ export default function OurProducts() {
                       {product.name}
                     </h2>
                     
-                    <p className="text-base sm:text-lg text-slate-600 mb-10 leading-relaxed font-medium break-words">
-                      {product.description}
-                    </p>
+                    <div 
+                      className="text-base sm:text-lg text-slate-600 mb-10 leading-relaxed font-medium break-words prose max-w-none prose-slate"
+                      dangerouslySetInnerHTML={{ __html: product.description || '' }}
+                    />
 
                     <div className="bg-slate-50 p-6 sm:p-8 rounded-xl border border-slate-100 shadow-lg w-full overflow-hidden">
                       <h3 className="text-lg sm:text-xl font-black text-secondary mb-6 sm:mb-8 uppercase tracking-widest flex items-center gap-3 flex-wrap pr-4">
