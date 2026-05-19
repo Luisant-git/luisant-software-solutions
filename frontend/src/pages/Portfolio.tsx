@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
-import { portfolioApi, Portfolio } from "../lib/portfolioApi";
+import { portfolioApi, Portfolio, getCategoryName } from "../lib/portfolioApi";
 import PromoBar from "../components/PromoBar";
 import PortfolioCard from "../components/PortfolioCard";
 import CategoryFilter from "../components/CategoryFilter";
@@ -34,7 +34,7 @@ export default function PortfolioPage() {
 
         // Extract unique categories
         const uniqueCategories = Array.from(
-          new Set(sanitizedData.map((p: Portfolio) => p.category))
+          new Set(sanitizedData.map((p: Portfolio) => getCategoryName(p.category)).filter(c => c))
         ) as string[];
         setCategories(uniqueCategories.sort());
 
@@ -155,7 +155,7 @@ export default function PortfolioPage() {
       setFilteredPortfolios(portfolios);
     } else {
       setFilteredPortfolios(
-        portfolios.filter((p) => p.category === category)
+        portfolios.filter((p) => getCategoryName(p.category) === category)
       );
     }
   };
