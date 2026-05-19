@@ -279,7 +279,7 @@ export default function PortfolioAdmin() {
               >
                 <div className="min-w-0">
                   <div className="font-bold text-secondary truncate">{p.title}</div>
-                  <div className="text-xs text-slate-400 mt-1">{p.category || 'Uncategorized'}</div>
+                  <div className="text-xs text-slate-400 mt-1">{getCategoryName(p.category) || 'Uncategorized'}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
