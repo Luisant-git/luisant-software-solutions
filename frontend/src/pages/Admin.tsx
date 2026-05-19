@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon, Briefcase, Download, Search, ChevronLeft, ChevronRight, Palette } from "lucide-react";
+import { Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon, Briefcase, Download, Search, ChevronLeft, ChevronRight, Palette, Edit3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../lib/authApi";
 import { productsApi, Product } from "../lib/productsApi";
@@ -9,11 +9,12 @@ import { uploadApi } from "../lib/uploadApi";
 import { careersApi, Career } from "../lib/careersApi";
 import { portfolioApi, Portfolio } from "../lib/portfolioApi";
 import PortfolioAdmin from "../components/PortfolioAdmin";
+import PortfolioCategoryAdmin from "../components/PortfolioCategoryAdmin";
 
 export default function Admin() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<"products" | "clients" | "careers" | "portfolio">("products");
+  const [activeTab, setActiveTab] = useState<"products" | "clients" | "careers" | "portfolio" | "categories">("products");
   const [loading, setLoading] = useState(false);
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -275,19 +276,26 @@ export default function Admin() {
                 <Users size={16} />
                 CLIENTS
               </button>
-              <button 
+              {/* <button 
                 onClick={() => { setActiveTab("careers"); setEditingProduct(null); setEditingClient(null); }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === "careers" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
               >
                 <Briefcase size={16} />
                 CAREERS
-              </button>
+              </button> */}
               <button 
                 onClick={() => { setActiveTab("portfolio"); setEditingProduct(null); setEditingClient(null); setEditingPortfolio(null); }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === "portfolio" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
               >
                 <Palette size={16} />
                 PORTFOLIO
+              </button>
+              <button 
+                onClick={() => { setActiveTab("categories"); setEditingProduct(null); setEditingClient(null); setEditingPortfolio(null); }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === "categories" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+              >
+                <ImageIcon size={16} />
+                CATEGORIES
               </button>
             </div>
           </div>
@@ -407,6 +415,8 @@ export default function Admin() {
           </div>
         ) : activeTab === "portfolio" ? (
           <PortfolioAdmin />
+        ) : activeTab === "categories" ? (
+          <PortfolioCategoryAdmin />
         ) : (
           <div className="grid lg:grid-cols-12 gap-10">
             <div className="lg:col-span-4 space-y-4">
@@ -438,14 +448,23 @@ export default function Admin() {
                   </div>
                 ))}
                 {!loading && activeTab === "clients" && clients.map((c) => (
-                  <div key={c.id} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 group transition-all hover:shadow-md">
+                  <div key={c.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
                     <div className="flex items-center gap-3">
-                      {c.logo && <img src={c.logo} className="w-8 h-8 rounded object-contain bg-slate-50" />}
-                      <span className="font-bold text-secondary truncate mr-4">{c.name}</span>
+                      <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden">
+                        {c.logo ? <img src={c.logo} className="w-full h-full object-contain" /> : <div className="text-slate-300">Logo</div>}
+                      </div>
+                      <div>
+                        <div className="font-bold text-secondary">{c.name}</div>
+                        
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => setEditingClient(c)} className="p-2 text-slate-400 hover:text-primary transition-colors">Edit</button>
-                      <button onClick={() => handleDeleteClient(c.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setEditingClient(c)} className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all" title="Edit client">
+                        <Edit3 size={16} />
+                      </button>
+                      <button onClick={() => handleDeleteClient(c.id)} className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all" title="Delete client">
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                 ))}

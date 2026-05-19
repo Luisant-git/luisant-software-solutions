@@ -11,6 +11,8 @@ import {
 } from '@nestjs/common';
 import { PortfolioService } from './portfolio.service';
 import { CreatePortfolioDto } from './dto/create-portfolio.dto';
+import { CreatePortfolioCategoryDto } from './dto/create-portfolio-category.dto';
+import { UpdatePortfolioCategoryDto } from './dto/update-portfolio-category.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('portfolio')
@@ -32,6 +34,32 @@ export class PortfolioController {
   @Get('public/all')
   findAllPublic() {
     return this.portfolioService.findAllPublic();
+  }
+
+  @Get('categories')
+  findAllCategories() {
+    return this.portfolioService.findAllCategories();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('categories')
+  createCategory(@Body() createPortfolioCategoryDto: CreatePortfolioCategoryDto) {
+    return this.portfolioService.createCategory(createPortfolioCategoryDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('categories/:id')
+  updateCategory(
+    @Param('id') id: string,
+    @Body() updatePortfolioCategoryDto: UpdatePortfolioCategoryDto,
+  ) {
+    return this.portfolioService.updateCategory(id, updatePortfolioCategoryDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('categories/:id')
+  removeCategory(@Param('id') id: string) {
+    return this.portfolioService.removeCategory(id);
   }
 
   @Get('category/:category')

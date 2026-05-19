@@ -1,17 +1,81 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { Plus, Trash2, Save, Image as ImageIcon } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Save,
+  Image as ImageIcon,
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Link2,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  Edit3,
+} from "lucide-react";
 import { portfolioApi, Portfolio } from "../lib/portfolioApi";
 import { uploadApi } from "../lib/uploadApi";
 
 export default function PortfolioAdmin() {
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [editingPortfolio, setEditingPortfolio] = useState<Partial<Portfolio> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [categorySearch, setCategorySearch] = useState("");
+  const [filteredCategories, setFilteredCategories] = useState<string[]>([]);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const descriptionRef = useRef<HTMLDivElement | null>(null);
+  const selectionRef = useRef<Range | null>(null);
 
   useEffect(() => {
     loadPortfolios();
+    loadCategories();
   }, []);
+
+  useEffect(() => {
+    const onSelectionChange = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+      const range = selection.getRangeAt(0);
+      if (!descriptionRef.current?.contains(selection.anchorNode)) return;
+      selectionRef.current = range.cloneRange();
+    };
+
+    document.addEventListener("selectionchange", onSelectionChange);
+    return () => document.removeEventListener("selectionchange", onSelectionChange);
+  }, []);
+
+  useEffect(() => {
+    if (!descriptionRef.current) return;
+    if (!editingPortfolio) {
+      descriptionRef.current.innerHTML = "";
+      return;
+    }
+
+    const descriptionHtml = editingPortfolio.description || "<p><br></p>";
+    if (descriptionRef.current.innerHTML !== descriptionHtml) {
+      descriptionRef.current.innerHTML = descriptionHtml;
+    }
+  }, [editingPortfolio?.id, editingPortfolio?.description]);
+
+  useEffect(() => {
+    if (editingPortfolio?.category) {
+      setCategorySearch(editingPortfolio.category);
+    } else {
+      setCategorySearch("");
+    }
+  }, [editingPortfolio?.category]);
+
+  useEffect(() => {
+    setFilteredCategories(
+      categories.filter((category) =>
+        category.toLowerCase().includes(categorySearch.toLowerCase()),
+      ),
+    );
+  }, [categorySearch, categories]);
 
   const loadPortfolios = async () => {
     try {
@@ -22,6 +86,15 @@ export default function PortfolioAdmin() {
       console.error("Failed to load portfolios:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const data = await portfolioApi.getCategories();
+      setCategories(data.map((category) => category.name));
+    } catch (error) {
+      console.error("Failed to load portfolio categories:", error);
     }
   };
 
@@ -59,6 +132,58 @@ export default function PortfolioAdmin() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const saveEditorSelection = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    const anchorNode = selection.anchorNode;
+    const focusNode = selection.focusNode;
+    if (
+      !descriptionRef.current?.contains(anchorNode) &&
+      !descriptionRef.current?.contains(focusNode)
+    ) {
+      return;
+    }
+    selectionRef.current = range.cloneRange();
+  };
+
+  const restoreEditorSelection = () => {
+    const range = selectionRef.current;
+    const selection = window.getSelection();
+    if (!selection) return;
+    selection.removeAllRanges();
+    if (range) {
+      selection.addRange(range);
+    }
+  };
+
+const execEditorCommand = (command: string, value?: string) => {
+  if (!descriptionRef.current) return;
+
+  descriptionRef.current.focus();
+
+  // ✅ ensure block exists
+  document.execCommand("formatBlock", false, "p");
+
+  if (command === "createLink") {
+    const url = window.prompt("Enter URL", "https://");
+    if (!url) return;
+    document.execCommand("createLink", false, url);
+  } else {
+    document.execCommand(command, false, value ?? null);
+  }
+
+  const html = descriptionRef.current.innerHTML;
+  setEditingPortfolio({ ...editingPortfolio!, description: html });
+};
+
+  const handleDescriptionInput = () => {
+    if (!descriptionRef.current || !editingPortfolio) return;
+    const html = descriptionRef.current.innerHTML;
+    setEditingPortfolio({ ...editingPortfolio, description: html });
+    saveEditorSelection();
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,21 +244,26 @@ export default function PortfolioAdmin() {
             portfolios.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 group transition-all hover:shadow-md"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md"
               >
-                <span className="font-bold text-secondary truncate mr-4">{p.title}</span>
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="min-w-0">
+                  <div className="font-bold text-secondary truncate">{p.title}</div>
+                  <div className="text-xs text-slate-400 mt-1">{p.category || 'Uncategorized'}</div>
+                </div>
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => setEditingPortfolio(p)}
-                    className="p-2 text-slate-400 hover:text-primary transition-colors"
+                    className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all"
+                    title="Edit portfolio"
                   >
-                    Edit
+                    <Edit3 size={18} />
                   </button>
                   <button
                     onClick={() => handleDelete(p.id)}
-                    className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                    className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all"
+                    title="Delete portfolio"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={18} />
                   </button>
                 </div>
               </div>
@@ -193,18 +323,52 @@ export default function PortfolioAdmin() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-4 mb-6 text-secondary">
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
                   Category
                 </label>
-                <input
-                  type="text"
-                  value={editingPortfolio.category || ""}
-                  onChange={(e) =>
-                    setEditingPortfolio({ ...editingPortfolio, category: e.target.value })
-                  }
-                  className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={categorySearch}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setCategorySearch(value);
+                      setIsCategoryOpen(true);
+                      if (editingPortfolio) {
+                        setEditingPortfolio({ ...editingPortfolio, category: value });
+                      }
+                    }}
+                    onFocus={() => setIsCategoryOpen(true)}
+                    placeholder="Search categories"
+                    className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">▼</span>
+                  {isCategoryOpen && filteredCategories.length > 0 && (
+                    <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg max-h-56 overflow-y-auto">
+                      {filteredCategories.map((category) => (
+                        <button
+                          key={category}
+                          type="button"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            if (editingPortfolio) {
+                              setEditingPortfolio({ ...editingPortfolio, category });
+                            }
+                            setCategorySearch(category);
+                            setIsCategoryOpen(false);
+                          }}
+                          className="w-full px-4 py-3 text-left text-sm text-slate-700 hover:bg-slate-50"
+                        >
+                          {category}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-slate-400">
+                  Search an existing category or create one in the Categories admin tab.
+                </p>
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
@@ -222,17 +386,206 @@ export default function PortfolioAdmin() {
             </div>
 
             <div className="space-y-1 mb-6 text-secondary">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                Description
-              </label>
-              <textarea
-                rows={3}
-                value={editingPortfolio.description || ""}
-                onChange={(e) =>
-                  setEditingPortfolio({ ...editingPortfolio, description: e.target.value })
-                }
-                className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
+              <div className="flex flex-col gap-3">
+                <div>
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                    Description
+                  </label>
+                  <p className="text-xs text-slate-500 mt-1">Use the toolbar to format the project description.</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-slate-100 p-2">
+                  <select
+                    onMouseDown={saveEditorSelection}
+                    onChange={(e) => execEditorCommand("fontSize", e.target.value)}
+                    className="h-10 rounded-2xl border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    defaultValue="3"
+                  >
+                    <option value="2">12</option>
+                    <option value="3">14</option>
+                    <option value="4">16</option>
+                    <option value="5">18</option>
+                    <option value="6">20</option>
+                  </select>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("formatBlock", "<h1>")}
+                    className="h-10 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                  >
+                    H1
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("formatBlock", "<h2>")}
+                    className="h-10 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                  >
+                    H2
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("formatBlock", "<h3>")}
+                    className="h-10 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                  >
+                    H3
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("formatBlock", "<p>")}
+                    className="h-10 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                  >
+                    Normal
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("bold")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Bold"
+                  >
+                    <Bold size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("italic")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Italic"
+                  >
+                    <Italic size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("underline")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Underline"
+                  >
+                    <u className="text-lg">U</u>
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("justifyLeft")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Align left"
+                  >
+                    <AlignLeft size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("justifyCenter")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Align center"
+                  >
+                    <AlignCenter size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("justifyRight")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Align right"
+                  >
+                    <AlignRight size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("justifyFull")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Justify"
+                  >
+                    <AlignJustify size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("insertUnorderedList")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Bullet list"
+                  >
+                    <List size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("insertOrderedList")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Numbered list"
+                  >
+                    <ListOrdered size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      saveEditorSelection();
+                    }}
+                    onClick={() => execEditorCommand("createLink")}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-slate-200 transition-all"
+                    title="Insert link"
+                  >
+                    <Link2 size={16} />
+                  </button>
+                </div>
+              </div>
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 shadow-sm">
+                <div
+                  ref={descriptionRef}
+                  contentEditable
+                  suppressContentEditableWarning
+                  onInput={handleDescriptionInput}
+                  onBlur={handleDescriptionInput}
+                  onFocus={saveEditorSelection}
+                  onMouseUp={saveEditorSelection}
+                  onKeyUp={saveEditorSelection}
+                  onPointerUp={saveEditorSelection}
+                  className="min-h-[200px] w-full px-4 py-4 text-sm rounded-3xl bg-transparent outline-none whitespace-pre-wrap"
+                />
+              </div>
             </div>
 
             <div className="space-y-1 mb-6 text-secondary">

@@ -71,7 +71,8 @@ model Portfolio {
   title       String
   slug        String   @unique
   description String   @db.Text
-  category    String
+  categoryId  String
+  category    PortfolioCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   image       String   @db.Text
   images      String[] @default([])
   clientName  String?
@@ -86,4 +87,15 @@ model Portfolio {
   updatedAt   DateTime @updatedAt
 
   @@map("portfolios")
+}
+
+model PortfolioCategory {
+  id         String     @id @default(cuid())
+  name       String     @unique
+  portfolios Portfolio[]
+
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("portfolio_categories")
 }
