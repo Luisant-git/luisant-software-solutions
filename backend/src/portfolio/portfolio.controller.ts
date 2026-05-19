@@ -36,6 +36,7 @@ export class PortfolioController {
     return this.portfolioService.findAllPublic();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('categories')
   findAllCategories() {
     return this.portfolioService.findAllCategories();
