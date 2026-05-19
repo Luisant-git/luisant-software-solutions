@@ -18,7 +18,7 @@ import {
   ChevronLeft,
   ChevronDown,
 } from "lucide-react";
-import { portfolioApi, Portfolio } from "../lib/portfolioApi";
+import { portfolioApi, Portfolio, getCategoryName } from "../lib/portfolioApi";
 import { uploadApi } from "../lib/uploadApi";
 
 export default function PortfolioAdmin() {
@@ -65,7 +65,7 @@ export default function PortfolioAdmin() {
 
   useEffect(() => {
     if (editingPortfolio?.category) {
-      setCategorySearch(editingPortfolio.category);
+      setCategorySearch(getCategoryName(editingPortfolio.category));
     } else {
       setCategorySearch("");
     }

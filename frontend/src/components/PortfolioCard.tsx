@@ -6,7 +6,7 @@
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { Portfolio } from "../lib/portfolioApi";
+import { Portfolio, getCategoryName } from "../lib/portfolioApi";
 
 interface PortfolioCardProps {
   portfolio: Portfolio;
@@ -63,7 +63,7 @@ export default function PortfolioCard({ portfolio, index }: PortfolioCardProps) 
           {/* Category Badge */}
           <div className="inline-block mb-4">
             <span className="text-xs font-bold text-white bg-primary px-3 py-1 rounded-full uppercase tracking-widest">
-              {portfolio.category}
+              {getCategoryName(portfolio.category)}
             </span>
           </div>
 

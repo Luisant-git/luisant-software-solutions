@@ -6,7 +6,7 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { portfolioApi, Portfolio } from "../lib/portfolioApi";
+import { portfolioApi, Portfolio, getCategoryName } from "../lib/portfolioApi";
 import { ArrowRight, ExternalLink } from "lucide-react";
 
 export default function PortfolioDetail() {
@@ -142,7 +142,7 @@ export default function PortfolioDetail() {
               animate={{ opacity: 1, y: 0 }}
             >
               <span className="inline-block text-xs font-bold text-white bg-primary px-3 py-1 rounded-full uppercase tracking-widest mb-4">
-                {portfolio.category}
+              {getCategoryName(portfolio.category)}
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
                 {portfolio.title}

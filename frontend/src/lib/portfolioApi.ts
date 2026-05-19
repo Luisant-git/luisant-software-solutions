@@ -7,7 +7,7 @@ export interface Portfolio {
   title: string;
   slug: string;
   description: string;
-  category: string;
+  category: string | { id: string; name: string; createdAt: string; updatedAt: string } | null;
   image: string;
   images?: string[];
   clientName?: string;
@@ -19,6 +19,13 @@ export interface Portfolio {
   adminId: string;
   createdAt: string;
   updatedAt: string;
+}
+
+/** Safely extract category name whether the API returns a string or a full object */
+export function getCategoryName(category: Portfolio['category']): string {
+  if (!category) return '';
+  if (typeof category === 'string') return category;
+  return category.name ?? '';
 }
 
 export interface PortfolioCategory {
