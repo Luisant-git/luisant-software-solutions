@@ -39,3 +39,17 @@
     display: none;
   }
 }
+
+[contenteditable] ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+[contenteditable] ol {
+  list-style-type: decimal;
+  padding-left: 20px;
+}
+
+[contenteditable] li {
+  margin: 5px 0;
+}

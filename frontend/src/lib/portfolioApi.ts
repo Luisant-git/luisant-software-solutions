@@ -21,6 +21,13 @@ export interface Portfolio {
   updatedAt: string;
 }
 
+export interface PortfolioCategory {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const portfolioApi = {
   async getAll() {
     const token = authApi.getToken();
@@ -66,6 +73,85 @@ export const portfolioApi = {
     }
 
     return response.json();
+  },
+
+  async getCategories() {
+    const token = authApi.getToken();
+    const response = await fetch(`${API_URL}/portfolio/categories`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch portfolio categories');
+    }
+
+    return response.json();
+  },
+
+  async createCategory(category: { name: string }) {
+    const token = authApi.getToken();
+    const response = await fetch(`${API_URL}/portfolio/categories`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(category),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to create portfolio category');
+    }
+
+    return response.json();
+  },
+
+  async updateCategory(id: string, category: { name: string }) {
+    const token = authApi.getToken();
+    const response = await fetch(`${API_URL}/portfolio/categories/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(category),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to update portfolio category');
+    }
+
+    return response.json();
+  },
+
+  async deleteCategory(id: string) {
+    const token = authApi.getToken();
+    const response = await fetch(`${API_URL}/portfolio/categories/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      let errorMessage = 'Failed to delete portfolio category';
+      try {
+        const error = await response.json();
+        errorMessage = error.message || errorMessage;
+      } catch (e) {}
+      throw new Error(errorMessage);
+    }
+
+    try {
+      return await response.json();
+    } catch (e) {
+      return { success: true };
+    }
   },
 
   async create(portfolio: Omit<Portfolio, 'id' | 'adminId' | 'createdAt' | 'updatedAt'>) {

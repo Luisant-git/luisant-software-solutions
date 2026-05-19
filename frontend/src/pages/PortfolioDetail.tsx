@@ -32,6 +32,69 @@ export default function PortfolioDetail() {
     loadPortfolio();
   }, [slug]);
 
+  // Function to safely render HTML content
+  const createMarkup = (html: string) => {
+    // Clean up common issues in the HTML
+    let cleanedHtml = html;
+    
+    // Remove empty paragraphs
+    cleanedHtml = cleanedHtml.replace(/<p>\s*<\/p>/g, '');
+    cleanedHtml = cleanedHtml.replace(/<p><br\s*\/?><\/p>/g, '');
+    
+    // Fix nested paragraphs
+    const fixNestedPTags = (html: string): string => {
+      let previousHtml = '';
+      let currentHtml = html;
+      
+      // Keep removing nested p tags until no more changes
+      while (previousHtml !== currentHtml) {
+        previousHtml = currentHtml;
+        // Remove p tags that are directly inside other p tags
+        currentHtml = currentHtml.replace(/<p>([^<]*<p>.*?<\/p>[^<]*)<\/p>/gs, '$1');
+        // Remove p tags that wrap block elements
+        currentHtml = currentHtml.replace(/<p>(<div>|<ul>|<ol>|<h[1-6]>)/gi, '$1');
+        currentHtml = currentHtml.replace(/(<\/div>|<\/ul>|<\/ol>|<\/h[1-6]>)<\/p>/gi, '$1');
+      }
+      
+      return currentHtml;
+    };
+    
+    cleanedHtml = fixNestedPTags(cleanedHtml);
+    
+    // Fix malformed list items
+    cleanedHtml = cleanedHtml.replace(/<p><ol>/g, '<ol>');
+    cleanedHtml = cleanedHtml.replace(/<\/ol><\/p>/g, '</ol>');
+    cleanedHtml = cleanedHtml.replace(/<p><ul>/g, '<ul>');
+    cleanedHtml = cleanedHtml.replace(/<\/ul><\/p>/g, '</ul>');
+    
+    // Fix font size attributes - convert to inline styles
+    cleanedHtml = cleanedHtml.replace(/<font size="([1-7])">/g, (match, size) => {
+      const fontSizeMap: Record<string, string> = {
+        '1': '10px',
+        '2': '12px',
+        '3': '14px',
+        '4': '16px',
+        '5': '18px',
+        '6': '20px',
+        '7': '24px'
+      };
+      return `<span style="font-size: ${fontSizeMap[size] || '14px'};">`;
+    });
+    cleanedHtml = cleanedHtml.replace(/<\/font>/g, '</span>');
+    
+    // Ensure proper heading structure
+    cleanedHtml = cleanedHtml.replace(/<p><h([1-6])>/g, '<h$1>');
+    cleanedHtml = cleanedHtml.replace(/<\/h([1-6])><\/p>/g, '</h$1>');
+    
+    // Clean up empty spans
+    cleanedHtml = cleanedHtml.replace(/<span style="[^"]*"><\/span>/g, '');
+    
+    // Ensure content is wrapped in div for proper rendering
+    cleanedHtml = `<div class="prose-content">${cleanedHtml}</div>`;
+    
+    return { __html: cleanedHtml };
+  };
+
   if (loading) {
     return (
       <div className="pt-32 pb-20 min-h-screen text-center">
@@ -110,9 +173,11 @@ export default function PortfolioDetail() {
                 <h2 className="text-2xl sm:text-3xl font-bold text-secondary mb-6">
                   Project Overview
                 </h2>
-                <p className="text-lg text-slate-600 leading-relaxed mb-6">
-                  {portfolio.description}
-                </p>
+                {/* Use dangerouslySetInnerHTML with cleaned HTML */}
+                <div 
+                  className="prose prose-lg max-w-none text-slate-600"
+                  dangerouslySetInnerHTML={createMarkup(portfolio.description)}
+                />
               </motion.div>
 
               {/* Case Study */}
@@ -127,9 +192,9 @@ export default function PortfolioDetail() {
                     Case Study
                   </h2>
                   <div className="prose prose-lg max-w-none">
-                    <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">
+                    <div className="text-slate-600 leading-relaxed whitespace-pre-wrap">
                       {portfolio.caseStudy}
-                    </p>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -296,6 +361,102 @@ export default function PortfolioDetail() {
           </div>
         </div>
       </section>
+
+      {/* Custom styles for rich text content */}
+      <style>{`
+        .prose-content {
+          max-width: 100%;
+        }
+        .prose-content h1 {
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin-top: 1.5rem;
+          margin-bottom: 1rem;
+          color: #1e293b;
+        }
+        .prose-content h2 {
+          font-size: 2rem;
+          font-weight: 700;
+          margin-top: 1.5rem;
+          margin-bottom: 1rem;
+          color: #1e293b;
+        }
+        .prose-content h3 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          margin-top: 1.25rem;
+          margin-bottom: 0.75rem;
+          color: #1e293b;
+        }
+        .prose-content p {
+          margin-bottom: 1rem;
+          line-height: 1.75;
+        }
+        .prose-content ul, .prose-content ol {
+          margin-bottom: 1rem;
+          padding-left: 1.5rem;
+        }
+        .prose-content ul {
+          list-style-type: disc;
+        }
+        .prose-content ol {
+          list-style-type: decimal;
+        }
+        .prose-content li {
+          margin-bottom: 0.5rem;
+          line-height: 1.75;
+        }
+        .prose-content strong, .prose-content b {
+          font-weight: 700;
+          color: #0f172a;
+        }
+        .prose-content em, .prose-content i {
+          font-style: italic;
+        }
+        .prose-content u {
+          text-decoration: underline;
+        }
+        .prose-content a {
+          color: #2563eb;
+          text-decoration: underline;
+        }
+        .prose-content a:hover {
+          color: #1d4ed8;
+        }
+        .prose-content img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 0.5rem;
+          margin: 1rem 0;
+        }
+        .prose-content blockquote {
+          border-left: 4px solid #e2e8f0;
+          padding-left: 1rem;
+          font-style: italic;
+          margin: 1rem 0;
+          color: #475569;
+        }
+        .prose-content code {
+          background-color: #f1f5f9;
+          padding: 0.2rem 0.4rem;
+          border-radius: 0.25rem;
+          font-family: monospace;
+          font-size: 0.875em;
+        }
+        .prose-content pre {
+          background-color: #1e293b;
+          color: #e2e8f0;
+          padding: 1rem;
+          border-radius: 0.5rem;
+          overflow-x: auto;
+          margin: 1rem 0;
+        }
+        .prose-content pre code {
+          background-color: transparent;
+          color: inherit;
+          padding: 0;
+        }
+      `}</style>
     </div>
   );
 }

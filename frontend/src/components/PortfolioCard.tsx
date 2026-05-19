@@ -14,6 +14,30 @@ interface PortfolioCardProps {
 }
 
 export default function PortfolioCard({ portfolio, index }: PortfolioCardProps) {
+  // Function to safely convert HTML to plain text
+  const getPlainText = (html: string): string => {
+    if (!html) return "No description available";
+    
+    // Create a temporary div to strip HTML tags
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const text = tempDiv.textContent || tempDiv.innerText || "";
+    
+    // Clean up whitespace and trim
+    const cleaned = text.replace(/\s+/g, ' ').trim();
+    
+    return cleaned || "No description available";
+  };
+
+  // Function to truncate text to specific length
+  const truncateText = (text: string, maxLength: number = 100): string => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
+  // Get clean description preview
+  const descriptionPreview = truncateText(getPlainText(portfolio.description), 100);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
