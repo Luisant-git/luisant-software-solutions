@@ -14,6 +14,30 @@ interface PortfolioCardProps {
 }
 
 export default function PortfolioCard({ portfolio, index }: PortfolioCardProps) {
+  // Function to safely convert HTML to plain text
+  const getPlainText = (html: string): string => {
+    if (!html) return "No description available";
+    
+    // Create a temporary div to strip HTML tags
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const text = tempDiv.textContent || tempDiv.innerText || "";
+    
+    // Clean up whitespace and trim
+    const cleaned = text.replace(/\s+/g, ' ').trim();
+    
+    return cleaned || "No description available";
+  };
+
+  // Function to truncate text to specific length
+  const truncateText = (text: string, maxLength: number = 100): string => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
+  // Get clean description preview
+  const descriptionPreview = truncateText(getPlainText(portfolio.description), 100);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -47,15 +71,15 @@ export default function PortfolioCard({ portfolio, index }: PortfolioCardProps) 
           {portfolio.title}
         </h3>
 
-        {/* Description */}
+        {/* Description - Now safely rendered as plain text */}
         <p className="text-slate-600 text-sm sm:text-base mb-4 line-clamp-2 leading-relaxed">
-          {portfolio.description}
+          {descriptionPreview}
         </p>
 
         {/* Technologies */}
         <div className="mb-6">
           <div className="flex flex-wrap gap-2">
-            {portfolio.technologies.slice(0, 3).map((tech, i) => (
+            {portfolio.technologies && portfolio.technologies.slice(0, 3).map((tech, i) => (
               <span
                 key={i}
                 className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-lg"
@@ -63,7 +87,7 @@ export default function PortfolioCard({ portfolio, index }: PortfolioCardProps) 
                 {tech}
               </span>
             ))}
-            {portfolio.technologies.length > 3 && (
+            {portfolio.technologies && portfolio.technologies.length > 3 && (
               <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
                 +{portfolio.technologies.length - 3} more
               </span>

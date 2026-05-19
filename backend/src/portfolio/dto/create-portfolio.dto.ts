@@ -14,8 +14,12 @@ export class CreatePortfolioDto {
   description: string;
 
   @IsString()
-  @IsNotEmpty()
-  category: string;
+  @IsOptional()
+  categoryId?: string;
+
+  @IsString()
+  @IsOptional()
+  category?: string;
 
   @IsString()
   @IsNotEmpty()

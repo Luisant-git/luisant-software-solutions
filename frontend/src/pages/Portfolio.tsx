@@ -23,16 +23,23 @@ export default function PortfolioPage() {
       try {
         setLoading(true);
         const data = await portfolioApi.getPublic();
-        setPortfolios(data);
+        
+        // Sanitize each portfolio's description
+        const sanitizedData = data.map(portfolio => ({
+          ...portfolio,
+          description: sanitizeHtml(portfolio.description || "")
+        }));
+        
+        setPortfolios(sanitizedData);
 
         // Extract unique categories
         const uniqueCategories = Array.from(
-          new Set(data.map((p: Portfolio) => p.category))
+          new Set(sanitizedData.map((p: Portfolio) => p.category))
         ) as string[];
         setCategories(uniqueCategories.sort());
 
         // Set initial filtered portfolios
-        setFilteredPortfolios(data);
+        setFilteredPortfolios(sanitizedData);
       } catch (error) {
         console.error("Failed to load portfolios:", error);
       } finally {
@@ -42,6 +49,103 @@ export default function PortfolioPage() {
 
     loadPortfolios();
   }, []);
+
+  // Comprehensive HTML sanitization function
+  const sanitizeHtml = (html: string): string => {
+    if (!html) return "";
+    
+    let cleaned = html;
+    
+    // Remove empty paragraphs
+    cleaned = cleaned.replace(/<p>\s*<\/p>/g, '');
+    cleaned = cleaned.replace(/<p><br\s*\/?><\/p>/g, '');
+    cleaned = cleaned.replace(/<p><\/p>/g, '');
+    
+    // Fix deeply nested p tags - recursive cleanup
+    const fixDeepNesting = (str: string): string => {
+      let changed = true;
+      let result = str;
+      let maxIterations = 10;
+      let iterations = 0;
+      
+      while (changed && iterations < maxIterations) {
+        changed = false;
+        iterations++;
+        
+        // Remove p tags that are directly inside other p tags
+        const newResult = result.replace(/<p>([^<]*<p>.*?<\/p>[^<]*)<\/p>/gs, (match, content) => {
+          changed = true;
+          return content;
+        });
+        
+        result = newResult;
+      }
+      
+      return result;
+    };
+    
+    cleaned = fixDeepNesting(cleaned);
+    
+    // Remove p tags that wrap other block elements
+    cleaned = cleaned.replace(/<p>\s*(<div>|<ul>|<ol>|<h[1-6]>|<table>|觅食|循改)/gi, '$1');
+    cleaned = cleaned.replace(/(<\/div>|<\/ul>|<\/ol>|<\/h[1-6]>|<\/table>|<\/blockquote>)\s*<\/p>/gi, '$1');
+    
+    // Fix malformed lists
+    cleaned = cleaned.replace(/<p><ol>/g, '<ol>');
+    cleaned = cleaned.replace(/<\/ol><\/p>/g, '</ol>');
+    cleaned = cleaned.replace(/<p><ul>/g, '<ul>');
+    cleaned = cleaned.replace(/<\/ul><\/p>/g, '</ul>');
+    cleaned = cleaned.replace(/<p><li>/g, '<li>');
+    cleaned = cleaned.replace(/<\/li><\/p>/g, '</li>');
+    
+    // Fix headings
+    cleaned = cleaned.replace(/<p><h([1-6])>/g, '<h$1>');
+    cleaned = cleaned.replace(/<\/h([1-6])><\/p>/g, '</h$1>');
+    
+    // Fix font tags to spans with styles
+    cleaned = cleaned.replace(/<font size="([1-7])">/g, (match, size) => {
+      const sizeMap: Record<string, string> = {
+        '1': '12px',
+        '2': '13px',
+        '3': '16px',
+        '4': '18px',
+        '5': '20px',
+        '6': '24px',
+        '7': '28px'
+      };
+      return `<span style="font-size: ${sizeMap[size] || '16px'};">`;
+    });
+    cleaned = cleaned.replace(/<\/font>/g, '</span>');
+    
+    // Clean up any remaining nested structures
+    cleaned = cleaned.replace(/<p><p>/g, '<p>');
+    cleaned = cleaned.replace(/<\/p><\/p>/g, '</p>');
+    
+    // Remove any remaining empty elements
+    cleaned = cleaned.replace(/<[^>]+><\/[^>]+>/g, '');
+    
+    // Trim whitespace
+    cleaned = cleaned.trim();
+    
+    return cleaned;
+  };
+
+  // Function to get plain text preview (for card descriptions)
+  const getPlainTextPreview = (html: string, maxLength: number = 120): string => {
+    if (!html) return "";
+    
+    // Create a temporary div to strip HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const text = tempDiv.textContent || tempDiv.innerText || "";
+    
+    // Clean up whitespace
+    const cleaned = text.replace(/\s+/g, ' ').trim();
+    
+    // Truncate
+    if (cleaned.length <= maxLength) return cleaned;
+    return cleaned.substring(0, maxLength) + "...";
+  };
 
   // Handle category filter
   const handleCategoryChange = (category: string) => {
@@ -123,7 +227,11 @@ export default function PortfolioPage() {
               filteredPortfolios.map((portfolio, index) => (
                 <PortfolioCard
                   key={portfolio.id}
-                  portfolio={portfolio}
+                  portfolio={{
+                    ...portfolio,
+                    // Pass plain text preview for card description
+                    descriptionPreview: getPlainTextPreview(portfolio.description, 100)
+                  }}
                   index={index}
                 />
               ))
