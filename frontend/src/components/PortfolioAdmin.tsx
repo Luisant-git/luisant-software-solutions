@@ -283,7 +283,14 @@ export default function PortfolioAdmin() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setEditingPortfolio(p)}
+                    onClick={() => {
+                      // Normalize category to string when editing
+                      const normalizedPortfolio = {
+                        ...p,
+                        category: getCategoryName(p.category)
+                      };
+                      setEditingPortfolio(normalizedPortfolio);
+                    }}
                     className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all"
                     title="Edit portfolio"
                   >
