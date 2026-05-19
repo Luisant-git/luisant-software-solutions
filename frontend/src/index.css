@@ -17,3 +17,25 @@
 .glass {
   @apply bg-white/80 backdrop-blur-md;
 }
+
+@layer utilities {
+  @media (max-width: 768px) {
+    p, 
+    .prose p, 
+    .prose,
+    .text-slate-600, 
+    .text-slate-700,
+    .text-slate-800 {
+      text-align: justify;
+      text-justify: inter-word;
+    }
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

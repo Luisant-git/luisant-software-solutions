@@ -63,46 +63,52 @@ export default function ProductPage() {
                     {product.description}
                   </p>
 
-                  <div className="bg-slate-50 p-6 sm:p-8 rounded-xl border border-slate-100 shadow-lg w-full overflow-hidden">
-                    <h3 className="text-lg sm:text-xl font-black text-secondary mb-6 sm:mb-8 uppercase tracking-widest flex items-center gap-3 flex-wrap pr-4">
-                      <div className="w-10 h-1 bg-primary shrink-0" />
-                      <span className="break-words">Key Features</span>
-                    </h3>
-                    
-                    <ul className="space-y-4 sm:space-y-6 list-none p-0 pr-4">
-                      {product.points.map((point, i) => (
-                        <motion.li 
-                          key={i}
-                          initial={{ opacity: 0, x: -20 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.1 }}
-                          viewport={{ once: true }}
-                          className="flex items-start gap-3 sm:gap-4 w-full min-w-0"
-                        >
-                          <div className="shrink-0 w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-white mt-1 shadow-lg shadow-primary/20 flex-shrink-0">
-                            <span className="text-xs font-bold font-serif">•</span>
-                          </div>
-                          <span className="text-base sm:text-lg text-slate-700 font-bold leading-relaxed break-words w-full">{point}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
+                  {((product.points && product.points.filter(p => p.trim() !== "").length > 0) || (product.buttonName?.trim() && product.buttonUrl?.trim())) && (
+                    <div className="bg-slate-50 p-6 sm:p-8 rounded-xl border border-slate-100 shadow-lg w-full overflow-hidden">
+                      {product.points && product.points.filter(p => p.trim() !== "").length > 0 && (
+                        <>
+                          <h3 className="text-lg sm:text-xl font-black text-secondary mb-6 sm:mb-8 uppercase tracking-widest flex items-center gap-3 flex-wrap pr-4">
+                            <div className="w-10 h-1 bg-primary shrink-0" />
+                            <span className="break-words">Key Features</span>
+                          </h3>
+                          
+                          <ul className="space-y-4 sm:space-y-6 list-none p-0 pr-4 mb-6">
+                            {product.points.filter(p => p.trim() !== "").map((point, i) => (
+                              <motion.li 
+                                key={i}
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                viewport={{ once: true }}
+                                className="flex items-start gap-3 sm:gap-4 w-full min-w-0"
+                              >
+                                <div className="shrink-0 w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-white mt-1 shadow-lg shadow-primary/20 flex-shrink-0">
+                                  <span className="text-xs font-bold font-serif">•</span>
+                                </div>
+                                <span className="text-base sm:text-lg text-slate-700 font-bold leading-relaxed break-words w-full">{point}</span>
+                              </motion.li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
 
-                    {product.buttonName && product.buttonUrl && (
-                      <div className="mt-8 pt-8 border-t border-slate-200">
-                        <a
-                          href={product.buttonUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20"
-                        >
-                          {product.buttonName}
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                          </svg>
-                        </a>
-                      </div>
-                    )}
-                  </div>
+                      {product.buttonName?.trim() && product.buttonUrl?.trim() && (
+                        <div className={`${product.points && product.points.filter(p => p.trim() !== "").length > 0 ? "mt-8 pt-8 border-t border-slate-200" : ""}`}>
+                          <a
+                            href={product.buttonUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20"
+                          >
+                            {product.buttonName}
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
                </motion.div>
             </div>
 

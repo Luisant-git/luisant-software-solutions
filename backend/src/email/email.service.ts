@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { join } from 'path';
 
 @Injectable()
 export class EmailService {
@@ -14,7 +15,7 @@ export class EmailService {
         pass: process.env.EMAIL_PASS,
       },
     });
-    this.logoUrl = process.env.LOGO_URL ?? 'https://luisant.in/logo-luisant-software-solutions.png';
+    this.logoUrl = 'cid:luisantlogo';
   }
 
   async sendAppointmentEmail(appointmentData: {
@@ -76,6 +77,11 @@ export class EmailService {
             </div>
           </div>
         `,
+        attachments: [{
+          filename: 'logo-luisant-software.png',
+          path: join(__dirname, '../../../frontend/public/logo-luisant-software.png'),
+          cid: 'luisantlogo'
+        }]
       };
 
       await this.transporter.sendMail(mailOptions);
@@ -126,6 +132,11 @@ export class EmailService {
             </div>
           </div>
         `,
+        attachments: [{
+          filename: 'logo-luisant-software.png',
+          path: join(__dirname, '../../../frontend/public/logo-luisant-software.png'),
+          cid: 'luisantlogo'
+        }]
       };
 
       await this.transporter.sendMail(mailOptions);
@@ -192,6 +203,11 @@ export class EmailService {
             </div>
           </div>
         `,
+        attachments: [{
+          filename: 'logo-luisant-software.png',
+          path: join(__dirname, '../../../frontend/public/logo-luisant-software.png'),
+          cid: 'luisantlogo'
+        }]
       };
 
       await this.transporter.sendMail(mailOptions);
@@ -242,6 +258,11 @@ export class EmailService {
             </div>
           </div>
         `,
+        attachments: [{
+          filename: 'logo-luisant-software.png',
+          path: join(__dirname, '../../../frontend/public/logo-luisant-software.png'),
+          cid: 'luisantlogo'
+        }]
       };
 
       await this.transporter.sendMail(mailOptions);

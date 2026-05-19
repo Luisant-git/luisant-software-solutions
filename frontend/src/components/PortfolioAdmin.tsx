@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Plus, Trash2, Save, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, Save, Image as ImageIcon, ChevronLeft } from "lucide-react";
 import { portfolioApi, Portfolio } from "../lib/portfolioApi";
 import { uploadApi } from "../lib/uploadApi";
 
@@ -33,10 +33,39 @@ export default function PortfolioAdmin() {
 
     try {
       setLoading(true);
+
+      // Clean up optional fields and arrays
+      const cleanedTechs = (editingPortfolio.technologies || [])
+        .map(t => t.trim())
+        .filter(t => t !== "");
+
+      const cleanedFeatures = (editingPortfolio.features || [])
+        .map(f => f.trim())
+        .filter(f => f !== "");
+
+      const cleanedResults = (editingPortfolio.results || [])
+        .map(r => r.trim())
+        .filter(r => r !== "");
+
+      const cleanedImages = (editingPortfolio.images || [])
+        .map(img => img.trim())
+        .filter(img => img !== "");
+
+      const portfolioToSave = {
+        ...editingPortfolio,
+        technologies: cleanedTechs,
+        features: cleanedFeatures,
+        results: cleanedResults,
+        images: cleanedImages,
+        clientName: editingPortfolio.clientName?.trim() || null,
+        link: editingPortfolio.link?.trim() || null,
+        caseStudy: editingPortfolio.caseStudy?.trim() || null,
+      };
+
       if (editingPortfolio.id) {
-        await portfolioApi.update(editingPortfolio.id, editingPortfolio);
+        await portfolioApi.update(editingPortfolio.id, portfolioToSave);
       } else {
-        await portfolioApi.create(editingPortfolio as any);
+        await portfolioApi.create(portfolioToSave as any);
       }
       setEditingPortfolio(null);
       await loadPortfolios();
@@ -77,8 +106,8 @@ export default function PortfolioAdmin() {
   };
 
   return (
-    <div className="grid lg:grid-cols-12 gap-10">
-      <div className="lg:col-span-4 space-y-4">
+    <div className="grid lg:grid-cols-12 gap-6 lg:gap-10">
+      <div className={`lg:col-span-4 space-y-4 ${editingPortfolio ? "hidden lg:block" : "block"}`}>
         <button
           onClick={() =>
             setEditingPortfolio({
@@ -101,12 +130,12 @@ export default function PortfolioAdmin() {
             })
           }
           disabled={loading}
-          className="w-full bg-slate-900 text-white p-6 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all disabled:opacity-50"
+          className="w-full bg-slate-900 text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2.5 hover:bg-slate-800 transition-all disabled:opacity-50 text-sm"
         >
-          <Plus size={20} />
+          <Plus size={18} />
           ADD NEW PORTFOLIO
         </button>
-
+ 
         <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 space-y-2 max-h-[600px] overflow-y-auto">
           <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">
             Existing Portfolios
@@ -140,27 +169,34 @@ export default function PortfolioAdmin() {
             ))}
         </div>
       </div>
-
-      <div className="lg:col-span-8">
+ 
+      <div className={`lg:col-span-8 ${!editingPortfolio ? "hidden lg:block" : "block"}`}>
         {editingPortfolio ? (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white border-2 border-primary/10 rounded-xl p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
+            className="bg-white border-2 border-primary/10 rounded-xl p-4 sm:p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
           >
-            <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-slate-100 z-10">
+            <div className="sticky top-0 bg-white pb-4 mb-6 border-b border-slate-100 z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setEditingPortfolio(null)}
+                  className="lg:hidden p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <h2 className="text-xl font-black text-secondary uppercase tracking-tight italic">
+                  Portfolio Editor
+                </h2>
+              </div>
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="bg-primary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 text-sm"
               >
-                <Save size={18} /> {loading ? "SAVING..." : "SAVE PORTFOLIO"}
+                <Save size={16} /> {loading ? "SAVING..." : "SAVE PORTFOLIO"}
               </button>
             </div>
-
-            <h2 className="text-xl font-black text-secondary mb-6 uppercase tracking-tight italic">
-              Portfolio Editor
-            </h2>
 
             <div className="grid md:grid-cols-2 gap-4 mb-6 text-secondary">
               <div className="space-y-1">
@@ -423,14 +459,16 @@ export default function PortfolioAdmin() {
             </div>
           </motion.div>
         ) : (
-          <div className="h-full min-h-[400px] border-2 border-dashed border-slate-100 rounded-xl flex flex-col items-center justify-center text-slate-300 p-10 text-center">
-            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
-              <Plus size={40} className="text-slate-200" />
+          <div className="hidden lg:block h-full">
+            <div className="h-full min-h-[400px] border-2 border-dashed border-slate-100 rounded-xl flex flex-col items-center justify-center text-slate-300 p-10 text-center">
+              <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
+                <Plus size={40} className="text-slate-200" />
+              </div>
+              <p className="font-bold text-lg mb-2">Select a portfolio or create a new one</p>
+              <p className="text-sm max-w-xs">
+                Use the list on the left to manage portfolio projects shown on your website.
+              </p>
             </div>
-            <p className="font-bold text-lg mb-2">Select a portfolio or create a new one</p>
-            <p className="text-sm max-w-xs">
-              Use the list on the left to manage portfolio projects shown on your website.
-            </p>
           </div>
         )}
       </div>

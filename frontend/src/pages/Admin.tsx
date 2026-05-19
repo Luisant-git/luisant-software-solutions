@@ -130,10 +130,24 @@ export default function Admin() {
 
     try {
       setLoading(true);
+      
+      // Clean up points and optional fields
+      const cleanedPoints = (editingProduct.points || [])
+        .map(p => p.trim())
+        .filter(p => p !== "");
+
+      const productToSave = {
+        ...editingProduct,
+        points: cleanedPoints,
+        buttonName: editingProduct.buttonName?.trim() || null,
+        buttonUrl: editingProduct.buttonUrl?.trim() || null,
+        banner: editingProduct.banner?.trim() || null,
+      };
+
       if (editingProduct.id) {
-        await productsApi.update(editingProduct.id, editingProduct);
+        await productsApi.update(editingProduct.id, productToSave);
       } else {
-        await productsApi.create(editingProduct as any);
+        await productsApi.create(productToSave as any);
       }
       setEditingProduct(null);
       await loadProducts();
@@ -257,47 +271,51 @@ export default function Admin() {
   return (
     <div className="pt-24 min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 pb-6 border-b border-slate-100">
-          <div>
-            <h1 className="text-3xl font-black text-secondary uppercase tracking-tight">Admin <span className="text-primary italic">Dashboard</span></h1>
-            <div className="flex gap-4 mt-2 flex-wrap">
+        <div className="flex flex-col gap-4 mb-8 pb-6 border-b border-slate-100 w-full overflow-hidden">
+          <div className="flex justify-between items-center w-full gap-4">
+            <h1 className="text-2xl sm:text-3xl font-black text-secondary uppercase tracking-tight">
+              Admin <span className="text-primary italic">Dashboard</span>
+            </h1>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 text-slate-400 hover:text-red-500 transition-colors font-bold uppercase text-xs sm:text-sm tracking-wider sm:tracking-widest shrink-0"
+            >
+              <LogOut size={16} />
+              <span>Logout</span>
+            </button>
+          </div>
+          <div className="w-full overflow-hidden">
+            <div className="flex gap-3 overflow-x-auto no-scrollbar whitespace-nowrap pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 w-full">
               <button 
                 onClick={() => { setActiveTab("products"); setEditingProduct(null); setEditingClient(null); }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === "products" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all shrink-0 ${activeTab === "products" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
               >
                 <Package size={16} />
                 PRODUCTS
               </button>
               <button 
                 onClick={() => { setActiveTab("clients"); setEditingProduct(null); setEditingClient(null); }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === "clients" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all shrink-0 ${activeTab === "clients" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
               >
                 <Users size={16} />
                 CLIENTS
               </button>
               <button 
                 onClick={() => { setActiveTab("careers"); setEditingProduct(null); setEditingClient(null); }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === "careers" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all shrink-0 ${activeTab === "careers" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
               >
                 <Briefcase size={16} />
                 CAREERS
               </button>
               <button 
                 onClick={() => { setActiveTab("portfolio"); setEditingProduct(null); setEditingClient(null); setEditingPortfolio(null); }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === "portfolio" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all shrink-0 ${activeTab === "portfolio" ? "bg-primary text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
               >
                 <Palette size={16} />
                 PORTFOLIO
               </button>
             </div>
           </div>
-          <button 
-            onClick={handleLogout}
-            className="flex items-center gap-2 text-slate-400 hover:text-red-500 transition-colors font-bold uppercase text-sm tracking-widest"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
         </div>
 
         {activeTab === "careers" ? (
@@ -408,17 +426,21 @@ export default function Admin() {
         ) : activeTab === "portfolio" ? (
           <PortfolioAdmin />
         ) : (
-          <div className="grid lg:grid-cols-12 gap-10">
-            <div className="lg:col-span-4 space-y-4">
+          <div className="grid lg:grid-cols-12 gap-6 lg:gap-10">
+            <div className={`lg:col-span-4 space-y-4 ${
+              (activeTab === "products" && editingProduct) || (activeTab === "clients" && editingClient) 
+                ? "hidden lg:block" 
+                : "block"
+            }`}>
               <button 
                 onClick={activeTab === "products" ? handleAddProduct : handleAddClient}
                 disabled={loading}
-                className="w-full bg-slate-900 text-white p-6 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all disabled:opacity-50"
+                className="w-full bg-slate-900 text-white py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2.5 hover:bg-slate-800 transition-all disabled:opacity-50 text-sm"
               >
-                <Plus size={20} />
+                <Plus size={18} />
                 ADD NEW {activeTab === "products" ? "PRODUCT" : "CLIENT"}
               </button>
-
+ 
               <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 space-y-2">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Existing {activeTab}</h3>
                 {loading && <div className="text-center py-10 text-slate-400">Loading...</div>}
@@ -451,17 +473,29 @@ export default function Admin() {
                 ))}
               </div>
             </div>
-
-            <div className="lg:col-span-8">
+ 
+            <div className={`lg:col-span-8 ${
+              (activeTab === "products" && !editingProduct) || (activeTab === "clients" && !editingClient) 
+                ? "hidden lg:block" 
+                : "block"
+            }`}>
               {activeTab === "products" ? (
                 editingProduct ? (
-                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-6 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-6">
-                      <button onClick={handleSaveProduct} disabled={loading} className="bg-primary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
-                        <Save size={18} /> {loading ? 'SAVING...' : 'SAVE CHANGES'}
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <button 
+                          onClick={() => setEditingProduct(null)} 
+                          className="lg:hidden p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+                        >
+                          <ChevronLeft size={16} />
+                        </button>
+                        <h2 className="text-xl font-black text-secondary uppercase tracking-tight italic">Product Editor</h2>
+                      </div>
+                      <button onClick={handleSaveProduct} disabled={loading} className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 text-sm w-full sm:w-auto justify-center">
+                        <Save size={16} /> {loading ? 'SAVING...' : 'SAVE CHANGES'}
                       </button>
                     </div>
-                    <h2 className="text-xl font-black text-secondary mb-6 uppercase tracking-tight italic">Product Editor</h2>
                     <div className="grid md:grid-cols-2 gap-4 mb-6 text-secondary">
                       <div className="space-y-1">
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Product Name</label>
@@ -511,16 +545,28 @@ export default function Admin() {
                       </div>
                     </div>
                   </motion.div>
-                ) : <Placeholder text="product" />
+                ) : (
+                  <div className="hidden lg:block h-full">
+                    <Placeholder text="product" />
+                  </div>
+                )
               ) : (
                 editingClient ? (
-                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-6 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-6">
-                      <button onClick={handleSaveClient} disabled={loading} className="bg-primary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
-                        <Save size={18} /> {loading ? 'SAVING...' : 'SAVE CHANGES'}
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white border-2 border-primary/10 rounded-xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <button 
+                          onClick={() => setEditingClient(null)} 
+                          className="lg:hidden p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+                        >
+                          <ChevronLeft size={16} />
+                        </button>
+                        <h2 className="text-xl font-black text-secondary uppercase tracking-tight italic">Client Editor</h2>
+                      </div>
+                      <button onClick={handleSaveClient} disabled={loading} className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 text-sm w-full sm:w-auto justify-center">
+                        <Save size={16} /> {loading ? 'SAVING...' : 'SAVE CHANGES'}
                       </button>
                     </div>
-                    <h2 className="text-xl font-black text-secondary mb-6 uppercase tracking-tight italic">Client Editor</h2>
                     <div className="space-y-4 text-secondary">
                       <div className="space-y-1">
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Client Name</label>
@@ -542,7 +588,11 @@ export default function Admin() {
                       </div>
                     </div>
                   </motion.div>
-                ) : <Placeholder text="client" />
+                ) : (
+                  <div className="hidden lg:block h-full">
+                    <Placeholder text="client" />
+                  </div>
+                )
               )}
             </div>
           </div>

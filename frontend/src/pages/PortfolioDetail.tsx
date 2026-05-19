@@ -84,7 +84,7 @@ export default function PortfolioDetail() {
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
                 {portfolio.title}
               </h1>
-              {portfolio.clientName && (
+              {portfolio.clientName?.trim() && (
                 <p className="text-lg text-slate-200">
                   Client: <span className="font-semibold">{portfolio.clientName}</span>
                 </p>
@@ -116,7 +116,7 @@ export default function PortfolioDetail() {
               </motion.div>
 
               {/* Case Study */}
-              {portfolio.caseStudy && (
+              {portfolio.caseStudy?.trim() && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -135,7 +135,7 @@ export default function PortfolioDetail() {
               )}
 
               {/* Features */}
-              {portfolio.features.length > 0 && (
+              {portfolio.features && portfolio.features.filter(f => f.trim() !== "").length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -146,7 +146,7 @@ export default function PortfolioDetail() {
                     Key Features
                   </h2>
                   <ul className="space-y-4">
-                    {portfolio.features.map((feature, i) => (
+                    {portfolio.features.filter(f => f.trim() !== "").map((feature, i) => (
                       <motion.li
                         key={i}
                         initial={{ opacity: 0, x: -20 }}
@@ -168,7 +168,7 @@ export default function PortfolioDetail() {
               )}
 
               {/* Results */}
-              {portfolio.results && portfolio.results.length > 0 && (
+              {portfolio.results && portfolio.results.filter(r => r.trim() !== "").length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -179,7 +179,7 @@ export default function PortfolioDetail() {
                     Results & Outcomes
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-6">
-                    {portfolio.results.map((result, i) => (
+                    {portfolio.results.filter(r => r.trim() !== "").map((result, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, y: 20 }}
@@ -206,7 +206,7 @@ export default function PortfolioDetail() {
               )}
 
               {/* Gallery */}
-              {portfolio.images && portfolio.images.length > 0 && (
+              {portfolio.images && portfolio.images.filter(img => img.trim() !== "").length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -217,7 +217,7 @@ export default function PortfolioDetail() {
                     Project Gallery
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-6">
-                    {portfolio.images.map((image, i) => (
+                    {portfolio.images.filter(img => img.trim() !== "").map((image, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -241,52 +241,57 @@ export default function PortfolioDetail() {
 
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              {/* Technologies */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="bg-slate-50 p-8 rounded-xl border border-slate-100 mb-8 sticky top-24"
-              >
-                <h3 className="text-lg font-bold text-secondary mb-6">
-                  Technologies Used
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {portfolio.technologies.map((tech, i) => (
-                    <span
-                      key={i}
-                      className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-lg"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
+              {((portfolio.technologies && portfolio.technologies.filter(t => t.trim() !== "").length > 0) || portfolio.link?.trim()) && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="bg-slate-50 p-8 rounded-xl border border-slate-100 mb-8 sticky top-24"
+                >
+                  {portfolio.technologies && portfolio.technologies.filter(t => t.trim() !== "").length > 0 && (
+                    <>
+                      <h3 className="text-lg font-bold text-secondary mb-6">
+                        Technologies Used
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {portfolio.technologies.filter(t => t.trim() !== "").map((tech, i) => (
+                          <span
+                            key={i}
+                            className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-lg"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </>
+                  )}
 
-                {/* Live Link */}
-                {portfolio.link && (
-                  <div className="mt-8 pt-8 border-t border-slate-200">
-                    <a
-                      href={portfolio.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all group"
+                  {/* Live Link */}
+                  {portfolio.link?.trim() && (
+                    <div className={`mt-8 ${portfolio.technologies && portfolio.technologies.filter(t => t.trim() !== "").length > 0 ? "pt-8 border-t border-slate-200" : ""}`}>
+                      <a
+                        href={portfolio.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all group"
+                      >
+                        Visit Live Project
+                        <ExternalLink size={16} className="group-hover:translate-x-1 transition-transform" />
+                      </a>
+                    </div>
+                  )}
+
+                  {/* CTA */}
+                  <div className={`mt-8 ${portfolio.link?.trim() || (portfolio.technologies && portfolio.technologies.filter(t => t.trim() !== "").length > 0) ? "pt-8 border-t border-slate-200" : ""}`}>
+                    <Link
+                      to="/customer-enquiry-form"
+                      className="block w-full bg-primary text-white py-3 rounded-lg font-bold text-center hover:bg-opacity-90 transition-all active:scale-95"
                     >
-                      Visit Live Project
-                      <ExternalLink size={16} className="group-hover:translate-x-1 transition-transform" />
-                    </a>
+                      Start Similar Project
+                    </Link>
                   </div>
-                )}
-
-                {/* CTA */}
-                <div className="mt-8 pt-8 border-t border-slate-200">
-                  <Link
-                    to="/customer-enquiry-form"
-                    className="block w-full bg-primary text-white py-3 rounded-lg font-bold text-center hover:bg-opacity-90 transition-all active:scale-95"
-                  >
-                    Start Similar Project
-                  </Link>
-                </div>
-              </motion.div>
+                </motion.div>
+              )}
             </div>
           </div>
         </div>

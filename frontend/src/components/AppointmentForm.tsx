@@ -112,7 +112,7 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
             <input 
               type="text" 
               required
-              className="w-full px-5 py-3 bg-white border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm"
+              className="w-full px-5 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm"
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
             />
@@ -123,7 +123,7 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
               type="tel" 
               required
               pattern="[0-9]{10}"
-              className="w-full px-5 py-3 bg-white border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm"
+              className="w-full px-5 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm"
               value={formData.phone}
               onChange={(e) => setFormData({...formData, phone: e.target.value})}
             />
@@ -135,7 +135,7 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
             <label className="text-[10px] font-bold text-slate-400 uppercase ml-2 tracking-wider">Email ID:</label>
             <input 
               type="email" 
-              className="w-full px-5 py-3 bg-white border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm"
+              className="w-full px-5 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm"
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
             />
@@ -144,7 +144,7 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
             <label className="text-[10px] font-bold text-slate-400 uppercase ml-2 tracking-wider">Business Type:</label>
             <input 
               type="text" 
-              className="w-full px-5 py-3 bg-white border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm"
+              className="w-full px-5 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm"
               value={formData.businessType}
               onChange={(e) => setFormData({...formData, businessType: e.target.value})}
             />
@@ -156,7 +156,7 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
           <div className="relative group">
             <select 
               required
-              className="w-full px-5 py-3 bg-white border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium appearance-none text-sm"
+              className="w-full px-5 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium appearance-none text-sm"
               value={formData.service}
               onChange={(e) => setFormData({...formData, service: e.target.value})}
             >
@@ -178,7 +178,7 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
           <label className="text-[10px] font-bold text-slate-400 uppercase ml-2 tracking-wider">Message:</label>
           <textarea 
             rows={4}
-            className="w-full px-5 py-3 bg-white border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm resize-none"
+            className="w-full px-5 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm resize-none"
             value={formData.message}
             onChange={(e) => setFormData({...formData, message: e.target.value})}
           />
@@ -205,7 +205,7 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
               type="text" 
               placeholder="Enter code"
               required
-              className="w-full sm:flex-grow px-3 sm:px-4 py-2 bg-white border border-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 font-medium text-xs sm:text-sm uppercase"
+              className="w-full sm:flex-grow px-3 sm:px-4 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 font-medium text-xs sm:text-sm uppercase"
               value={captchaInput}
               onChange={(e) => setCaptchaInput(e.target.value)}
             />

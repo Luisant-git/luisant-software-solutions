@@ -80,10 +80,12 @@ export default function DigitalShowcase() {
                     An <span className="font-bold text-secondary">online portfolio</span> is a digital platform that showcases your work, skills, and experiences. It’s a virtual resume that can be easily shared with potential clients, employers, or collaborators. For businesses, it serves as a powerful marketing tool to attract new clients and demonstrate expertise.
                   </p>
 
-                  <h3 className="text-xl md:text-2xl font-black text-secondary mb-8 uppercase tracking-tight flex items-center gap-3">
-                    <div className="w-8 md:w-10 h-1 bg-primary" />
-                    Benefits of an Online Portfolio
-                  </h3>
+                  <div className="mb-6">
+                    <h3 className="text-xl md:text-2xl font-black text-secondary uppercase tracking-tight mb-3">
+                      Benefits of an Online Portfolio
+                    </h3>
+                    <div className="w-12 h-1 bg-primary" />
+                  </div>
 
                   <div className="space-y-4 md:space-y-6">
                     {BENEFITS.map((benefit, i) => (

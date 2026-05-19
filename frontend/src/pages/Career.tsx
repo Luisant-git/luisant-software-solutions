@@ -164,7 +164,7 @@ export default function Career() {
                           type="text" 
                           placeholder="Your name"
                           required
-                          className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
+                          className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         />
@@ -176,7 +176,7 @@ export default function Career() {
                           placeholder="Your number"
                           required
                           pattern="[0-9]{10}"
-                          className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
+                          className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
                           value={formData.mobile}
                           onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
                         />
@@ -190,7 +190,7 @@ export default function Career() {
                           type="email" 
                           placeholder="Your email"
                           required
-                          className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
+                          className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         />
@@ -200,7 +200,7 @@ export default function Career() {
                         <input 
                           type="text" 
                           placeholder="Your city"
-                          className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
+                          className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
                           value={formData.city}
                           onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                         />
@@ -212,7 +212,7 @@ export default function Career() {
                       <textarea 
                         rows={3}
                         placeholder="E.g. React, Node, UI/UX"
-                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
+                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary font-medium text-sm"
                         value={formData.skills}
                         onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
                       />
@@ -261,7 +261,7 @@ export default function Career() {
                           type="text" 
                           placeholder="Enter code"
                           required
-                          className="w-full sm:flex-grow px-3 sm:px-4 py-2 bg-white border border-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 font-medium text-xs sm:text-sm uppercase"
+                          className="w-full sm:flex-grow px-3 sm:px-4 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 font-medium text-xs sm:text-sm uppercase"
                           value={captchaInput}
                           onChange={(e) => setCaptchaInput(e.target.value)}
                         />

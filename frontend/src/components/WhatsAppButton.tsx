@@ -6,7 +6,7 @@
 import { motion } from "motion/react";
 
 export default function WhatsAppButton() {
-  const whatsappLink = "https://api.whatsapp.com/message/LPC5UPPQG7TWM1?autoload=1&app_absent=0";
+  const whatsappLink = "https://wa.me/message/LPC5UPPQG7TWM1";
 
   return (
     <motion.a

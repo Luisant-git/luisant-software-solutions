@@ -110,11 +110,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-slate-500 text-sm font-medium">
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6">
+          <p className="text-slate-500 text-sm font-medium text-center md:text-left">
             © {new Date().getFullYear()} Luisant Software Solutions. All Rights Reserved.
           </p>
-          <div className="flex gap-8 text-sm text-slate-500 font-medium">
+          <div className="flex gap-4 sm:gap-6 md:gap-8 text-sm text-slate-500 font-medium justify-center">
             <a href="/privacy-policy" className="hover:text-white transition-colors">Privacy</a>
             <a href="/terms-conditions/" className="hover:text-white transition-colors">Terms</a>
             <a href="#" className="hover:text-white transition-colors">Cookies</a>
