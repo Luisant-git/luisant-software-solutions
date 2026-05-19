@@ -126,21 +126,26 @@ export default function PortfolioAdmin() {
         .map(img => img.trim())
         .filter(img => img !== "");
 
-      const portfolioToSave = {
-        ...editingPortfolio,
-        technologies: cleanedTechs,
-        features: cleanedFeatures,
-        results: cleanedResults,
+      // Create clean portfolio object without system fields
+      const portfolioToSave: any = {
+        title: editingPortfolio.title,
+        slug: editingPortfolio.slug,
+        description: editingPortfolio.description || "",
+        category: editingPortfolio.category,
+        image: editingPortfolio.image || "",
         images: cleanedImages,
         clientName: editingPortfolio.clientName?.trim() || null,
+        technologies: cleanedTechs,
+        features: cleanedFeatures,
         link: editingPortfolio.link?.trim() || null,
         caseStudy: editingPortfolio.caseStudy?.trim() || null,
+        results: cleanedResults,
       };
 
       if (editingPortfolio.id) {
         await portfolioApi.update(editingPortfolio.id, portfolioToSave);
       } else {
-        await portfolioApi.create(portfolioToSave as any);
+        await portfolioApi.create(portfolioToSave);
       }
       setEditingPortfolio(null);
       await loadPortfolios();

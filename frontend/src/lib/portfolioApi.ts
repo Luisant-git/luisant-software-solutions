@@ -183,7 +183,7 @@ export const portfolioApi = {
 
   async update(id: string, portfolio: Partial<Omit<Portfolio, 'id' | 'adminId' | 'createdAt' | 'updatedAt'>>) {
     const token = authApi.getToken();
-    const { createdAt, updatedAt, adminId, ...data } = portfolio as any;
+    const { createdAt, updatedAt, adminId, id: portfolioId, ...data } = portfolio as any;
     const response = await fetch(`${API_URL}/portfolio/${id}`, {
       method: 'PATCH',
       headers: {

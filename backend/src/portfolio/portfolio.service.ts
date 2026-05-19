@@ -132,12 +132,21 @@ export class PortfolioService {
 
     const data: any = { ...updatePortfolioDto };
 
+    // Remove fields that shouldn't be updated first
+    delete data.id;
+    delete data.adminId;
+    delete data.createdAt;
+    delete data.updatedAt;
+
+    // Handle category update
     if (updatePortfolioDto.category || updatePortfolioDto.categoryId) {
-      data.categoryId = await this.resolveCategoryId(
+      const resolvedCategoryId = await this.resolveCategoryId(
         updatePortfolioDto.categoryId,
         updatePortfolioDto.category,
       );
       delete data.category;
+      delete data.categoryId;
+      data.categoryId = resolvedCategoryId; // Set the resolved categoryId
     }
 
     const updated = await this.prisma.portfolio.update({
