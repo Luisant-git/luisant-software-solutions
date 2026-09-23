@@ -16,37 +16,40 @@ export default function PortfolioPage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filteredPortfolios, setFilteredPortfolios] = useState<Portfolio[]>([]);
 
+  const loadPortfolios = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await portfolioApi.getPublic();
+      
+      // Sanitize each portfolio's description
+      const sanitizedData = data.map(portfolio => ({
+        ...portfolio,
+        description: sanitizeHtml(portfolio.description || "")
+      }));
+      
+      setPortfolios(sanitizedData);
+
+      // Extract unique categories
+      const uniqueCategories = Array.from(
+        new Set(sanitizedData.map((p: Portfolio) => getCategoryName(p.category)).filter(c => c))
+      ) as string[];
+      setCategories(uniqueCategories.sort());
+
+      // Set initial filtered portfolios
+      setFilteredPortfolios(sanitizedData);
+    } catch (error) {
+      console.error("Failed to load portfolios:", error);
+      setError("Failed to load portfolios. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadPortfolios = async () => {
-      try {
-        setLoading(true);
-        const data = await portfolioApi.getPublic();
-        
-        // Sanitize each portfolio's description
-        const sanitizedData = data.map(portfolio => ({
-          ...portfolio,
-          description: sanitizeHtml(portfolio.description || "")
-        }));
-        
-        setPortfolios(sanitizedData);
-
-        // Extract unique categories
-        const uniqueCategories = Array.from(
-          new Set(sanitizedData.map((p: Portfolio) => getCategoryName(p.category)).filter(c => c))
-        ) as string[];
-        setCategories(uniqueCategories.sort());
-
-        // Set initial filtered portfolios
-        setFilteredPortfolios(sanitizedData);
-      } catch (error) {
-        console.error("Failed to load portfolios:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadPortfolios();
   }, []);
 
@@ -167,6 +170,23 @@ export default function PortfolioPage() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
         <p className="text-slate-600 mt-4">Loading portfolios...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="pt-32 pb-20 min-h-screen text-center">
+        <h2 className="text-3xl font-bold text-red-500 mb-4">
+          Oops! Something went wrong
+        </h2>
+        <p className="text-slate-500 mb-8 max-w-md mx-auto">{error}</p>
+        <button 
+          onClick={loadPortfolios}
+          className="bg-primary text-white font-bold py-2 px-6 rounded-full hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20"
+        >
+          Try Again
+        </button>
       </div>
     );
   }
