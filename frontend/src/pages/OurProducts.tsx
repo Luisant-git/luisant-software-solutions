@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { productsApi, Product, sortProducts } from "../lib/productsApi";
+import { Product } from "../lib/productsApi";
+import { getProducts } from "../lib/productService";
 import PromoBar from "../components/PromoBar";
 
 export default function OurProducts() {
@@ -12,8 +13,8 @@ export default function OurProducts() {
     const loadProducts = async () => {
       try {
         setLoading(true);
-        const data = await productsApi.getPublic();
-        setProducts(sortProducts(data));
+        const data = await getProducts();
+        setProducts(data);
       } catch (error) {
         console.error('Failed to load products:', error);
       } finally {

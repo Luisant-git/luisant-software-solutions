@@ -46,9 +46,30 @@ export class ProductsService {
   }
 
   async findBySlug(slug: string) {
-    const product = await this.prisma.product.findUnique({
+    const cleanSlug = decodeURIComponent(slug).trim().toLowerCase();
+
+    let product = await this.prisma.product.findUnique({
       where: { slug },
     });
+
+    if (!product) {
+      product = await this.prisma.product.findFirst({
+        where: {
+          slug: { equals: cleanSlug, mode: 'insensitive' },
+        },
+      });
+    }
+
+    if (!product) {
+      product = await this.prisma.product.findFirst({
+        where: {
+          OR: [
+            { name: { equals: cleanSlug.replace(/-/g, ' '), mode: 'insensitive' } },
+            { name: { equals: slug, mode: 'insensitive' } },
+          ],
+        },
+      });
+    }
 
     if (!product) {
       throw new NotFoundException('Product not found');

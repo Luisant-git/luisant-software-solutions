@@ -8,23 +8,52 @@ import PromoBar from "../components/PromoBar";
 export default function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     const loadProduct = async () => {
       if (slug) {
+        setLoading(true);
         const data = await getProductBySlug(slug);
-        setProduct(data || null);
+        if (isMounted) {
+          setProduct(data || null);
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
       }
     };
     loadProduct();
+    return () => {
+      isMounted = false;
+    };
   }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="pt-32 pb-20 min-h-screen text-center">
+        <div className="inline-block">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+        <p className="text-slate-600 mt-4 font-medium">Loading product details...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
       <div className="pt-32 pb-20 min-h-screen text-center">
         <h2 className="text-3xl font-bold text-secondary mb-4">Product Not Found</h2>
-        <p className="text-slate-500 mb-8">The requested product does not exist or has been removed.</p>
-        <Link to="/" className="text-primary font-bold hover:underline">Back to Home</Link>
+        <p className="text-slate-500 mb-8">The requested product could not be located.</p>
+        <div className="flex justify-center gap-4">
+          <Link to="/our-products" className="bg-primary text-white px-6 py-2.5 rounded-full font-bold hover:bg-opacity-90 transition-all">
+            Browse All Products
+          </Link>
+          <Link to="/" className="bg-slate-100 text-slate-700 px-6 py-2.5 rounded-full font-bold hover:bg-slate-200 transition-all">
+            Back to Home
+          </Link>
+        </div>
       </div>
     );
   }

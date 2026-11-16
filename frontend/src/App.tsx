@@ -39,6 +39,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about-us" element={<About />} />
             <Route path="/customer-enquiry-form" element={<Appointment />} />
+            <Route path="/appointment" element={<Appointment />} />
             <Route path="/ecommerce-application" element={<Ecommerce />} />
             <Route path="/business-website-designing" element={<BusinessWebDesign />} />
             <Route path="/digital-showcase" element={<DigitalShowcase />} />
@@ -51,6 +52,8 @@ export default function App() {
             <Route path="/admin" element={<Admin />} />
             <Route path="/our-services" element={<OurServices />} />
             <Route path="/our-products" element={<OurProducts />} />
+            <Route path="/products" element={<OurProducts />} />
+            <Route path="/product" element={<OurProducts />} />
             <Route path="/web-design-in-salem" element={<Blog />} />
             <Route path="/web-design-in-namakkal" element={<Blog />} />
             <Route path="/web-design-in-dharmapuri" element={<Blog />} />
@@ -62,6 +65,7 @@ export default function App() {
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/portfolio/:slug" element={<PortfolioDetail />} />
             <Route path="/product/:slug" element={<ProductPage />} />
+            <Route path="/products/:slug" element={<ProductPage />} />
           </Routes>
         </main>
         <Footer />

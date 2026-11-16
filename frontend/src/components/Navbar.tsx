@@ -25,8 +25,8 @@ export default function Navbar() {
         })));
       } else {
         setDynamicProducts([
-          { name: "Billing Software", href: "#" },
-          { name: "MicroFin Manager", href: "#" }
+          { name: "Billing Software", href: "/product/billing-software" },
+          { name: "MicroFin Manager", href: "/product/microfin-manager" }
         ]);
       }
     };
