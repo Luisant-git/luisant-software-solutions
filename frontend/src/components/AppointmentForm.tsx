@@ -7,16 +7,27 @@ interface AppointmentFormProps {
   defaultService?: string;
 }
 
+const normalizeService = (svc: string) => {
+  if (!svc) return "";
+  if (svc === "Website") return "Business Website Designing";
+  if (svc === "Digital") return "Digital Showcase";
+  if (svc === "Ecommerce") return "Ecommerce Application";
+  if (svc === "Custom") return "Custom Web Design";
+  return svc;
+};
+
 export default function AppointmentForm({ defaultService = "" }: AppointmentFormProps) {
+  const initialService = normalizeService(defaultService);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
     businessType: "",
-    service: defaultService,
+    service: initialService,
     message: ""
   });
 
+  const [otherService, setOtherService] = useState("");
   const [captcha, setCaptcha] = useState<CaptchaData | null>(null);
   const [captchaInput, setCaptchaInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,6 +38,16 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
   useEffect(() => {
     loadCaptcha();
   }, []);
+
+  useEffect(() => {
+    if (defaultService) {
+      const normalized = normalizeService(defaultService);
+      setFormData(prev => ({ ...prev, service: normalized }));
+      if (normalized !== "Other") {
+        setOtherService("");
+      }
+    }
+  }, [defaultService]);
 
   const loadCaptcha = async () => {
     try {
@@ -41,6 +62,20 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!formData.service) {
+      setModalType("error");
+      setModalMessage("Please choose a service.");
+      setShowModal(true);
+      return;
+    }
+
+    if (formData.service === "Other" && !otherService.trim()) {
+      setModalType("error");
+      setModalMessage("Please enter your service in the text box.");
+      setShowModal(true);
+      return;
+    }
+
     if (!captcha) {
       setModalType("error");
       setModalMessage("CAPTCHA not loaded. Please refresh.");
@@ -70,13 +105,17 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
         return;
       }
 
+      const finalService = formData.service === "Other" 
+        ? (otherService.trim() ? `Other: ${otherService.trim()}` : "Other")
+        : formData.service;
+
       // Submit appointment
       await appointmentApi.submitAppointment({
         name: formData.name,
         phone: formData.phone,
         email: formData.email,
         businessType: formData.businessType,
-        service: formData.service,
+        service: finalService,
         message: formData.message
       });
       
@@ -85,9 +124,10 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
         phone: "",
         email: "",
         businessType: "",
-        service: defaultService,
+        service: normalizeService(defaultService),
         message: ""
       });
+      setOtherService("");
       
       setModalType("success");
       setModalMessage("Thank you! Your enquiry has been sent. We will contact you shortly.");
@@ -158,21 +198,46 @@ export default function AppointmentForm({ defaultService = "" }: AppointmentForm
               required
               className="w-full px-5 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium appearance-none text-sm"
               value={formData.service}
-              onChange={(e) => setFormData({...formData, service: e.target.value})}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFormData({ ...formData, service: val });
+                if (val !== "Other") {
+                  setOtherService("");
+                }
+              }}
             >
               <option value="" disabled>—Please choose an option—</option>
               <option value="Billing Software">Billing Software</option>
-              <option value="Ecommerce">Ecommerce Application</option>
-              <option value="Website">Business Website Designing</option>
-              <option value="Digital">Digital Showcase</option>
-              <option value="Custom">Custom Web Design</option>
+              <option value="Ecommerce Application">Ecommerce Application</option>
+              <option value="Business Website Designing">Business Website Designing</option>
+              <option value="Digital Showcase">Digital Showcase</option>
+              <option value="Custom Web Design">Custom Web Design</option>
               <option value="WhaSuite 360">WhaSuite 360</option>
+              {defaultService && !["Billing Software", "Ecommerce Application", "Business Website Designing", "Digital Showcase", "Custom Web Design", "WhaSuite 360", "Other"].includes(normalizeService(defaultService)) && (
+                <option value={normalizeService(defaultService)}>{normalizeService(defaultService)}</option>
+              )}
+              <option value="Other">Other</option>
             </select>
             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </div>
           </div>
         </div>
+
+        {formData.service === "Other" && (
+          <div className="space-y-1 animate-in fade-in slide-in-from-top-1 duration-200">
+            <label className="text-[10px] font-bold text-slate-400 uppercase ml-2 tracking-wider">Specify Service:</label>
+            <input 
+              type="text" 
+              required
+              placeholder="Please enter your required service"
+              className="w-full px-5 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-sm"
+              value={otherService}
+              onChange={(e) => setOtherService(e.target.value)}
+              autoFocus
+            />
+          </div>
+        )}
 
         <div className="space-y-1">
           <label className="text-[10px] font-bold text-slate-400 uppercase ml-2 tracking-wider">Message:</label>
