@@ -1,16 +1,7 @@
-import { productsApi } from './productsApi';
+import { productsApi, Product, sortProducts } from './productsApi';
 import { clientsApi } from './clientsApi';
 
-export interface Product {
-  id: string;
-  slug: string;
-  name: string;
-  description: string;
-  points: string[];
-  adminId?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+export type { Product };
 
 export interface Client {
   id: string;
@@ -24,7 +15,8 @@ export interface Client {
 // Products - Using API
 export const getProducts = async (): Promise<Product[]> => {
   try {
-    return await productsApi.getPublic();
+    const products = await productsApi.getPublic();
+    return sortProducts(products);
   } catch (error) {
     console.error('Failed to fetch products:', error);
     return [];

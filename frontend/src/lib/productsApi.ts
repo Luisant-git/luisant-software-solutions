@@ -11,10 +11,21 @@ export interface Product {
   buttonName?: string;
   buttonUrl?: string;
   banner?: string;
+  mobileBanner?: string;
+  order?: number;
   adminId: string;
   createdAt: string;
   updatedAt: string;
 }
+
+export const sortProducts = (items: Product[]): Product[] => {
+  return [...items].sort((a, b) => {
+    const orderA = typeof a.order === 'number' && a.order > 0 ? a.order : 999999;
+    const orderB = typeof b.order === 'number' && b.order > 0 ? b.order : 999999;
+    if (orderA !== orderB) return orderA - orderB;
+    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+  });
+};
 
 export const productsApi = {
   async getAll() {

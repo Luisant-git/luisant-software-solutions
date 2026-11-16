@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon, Briefcase, Download, Search, ChevronLeft, ChevronRight, Palette, Edit3, Bold, Italic, List, ListOrdered, Link2, AlignLeft, AlignCenter, AlignRight, AlignJustify } from "lucide-react";
+import { Plus, Trash2, Save, LogOut, Package, Users, Image as ImageIcon, Briefcase, Download, Search, ChevronLeft, ChevronRight, Palette, Edit3, Bold, Italic, List, ListOrdered, Link2, AlignLeft, AlignCenter, AlignRight, AlignJustify, ArrowUp, ArrowDown, Monitor, Smartphone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../lib/authApi";
-import { productsApi, Product } from "../lib/productsApi";
+import { productsApi, Product, sortProducts } from "../lib/productsApi";
 import { clientsApi, Client } from "../lib/clientsApi";
 import { uploadApi } from "../lib/uploadApi";
 import { careersApi, Career } from "../lib/careersApi";
@@ -198,6 +198,8 @@ export default function Admin() {
       description: "",
       points: [""],
       banner: "",
+      mobileBanner: "",
+      order: products.length + 1,
       adminId: "",
       createdAt: "",
       updatedAt: "",
@@ -218,12 +220,20 @@ export default function Admin() {
         .map(p => p.trim())
         .filter(p => p !== "");
 
+      const parsedOrder = typeof editingProduct.order === "number"
+        ? editingProduct.order
+        : editingProduct.order
+        ? parseInt(String(editingProduct.order), 10)
+        : 0;
+
       const productToSave = {
         ...editingProduct,
         points: cleanedPoints,
         buttonName: editingProduct.buttonName?.trim() || null,
         buttonUrl: editingProduct.buttonUrl?.trim() || null,
         banner: editingProduct.banner?.trim() || null,
+        mobileBanner: editingProduct.mobileBanner?.trim() || null,
+        order: isNaN(parsedOrder) ? 0 : parsedOrder,
       };
 
       if (editingProduct.id) {
@@ -235,6 +245,31 @@ export default function Admin() {
       await loadProducts();
     } catch (error: any) {
       alert(error.message || 'Failed to save product');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMoveProduct = async (product: Product, direction: "up" | "down") => {
+    const sorted = sortProducts(products);
+    const currentIndex = sorted.findIndex(p => p.id === product.id);
+    if (currentIndex === -1) return;
+    const targetIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= sorted.length) return;
+
+    const targetProduct = sorted[targetIndex];
+    const newOrderCurrent = targetIndex + 1;
+    const newOrderTarget = currentIndex + 1;
+
+    try {
+      setLoading(true);
+      await Promise.all([
+        productsApi.update(product.id, { order: newOrderCurrent }),
+        productsApi.update(targetProduct.id, { order: newOrderTarget }),
+      ]);
+      await loadProducts();
+    } catch (err: any) {
+      alert(err.message || "Failed to update product order");
     } finally {
       setLoading(false);
     }
@@ -314,7 +349,7 @@ export default function Admin() {
     }
   };
 
-  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDesktopBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && editingProduct) {
       try {
@@ -322,12 +357,29 @@ export default function Admin() {
         const result = await uploadApi.uploadFile(file);
         setEditingProduct({ ...editingProduct, banner: result.url });
       } catch (error: any) {
-        alert(error.message || 'Failed to upload banner');
+        alert(error.message || 'Failed to upload desktop banner');
       } finally {
         setLoading(false);
       }
     }
   };
+
+  const handleMobileBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && editingProduct) {
+      try {
+        setLoading(true);
+        const result = await uploadApi.uploadFile(file);
+        setEditingProduct({ ...editingProduct, mobileBanner: result.url });
+      } catch (error: any) {
+        alert(error.message || 'Failed to upload mobile banner');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleBannerUpload = handleDesktopBannerUpload;
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -541,29 +593,55 @@ export default function Admin() {
                 {!loading && activeTab === "clients" && clients.length === 0 && (
                   <div className="text-center py-10 text-slate-400 italic">No clients added yet.</div>
                 )}
-                {!loading && activeTab === "products" && products.map((p) => (
-                  <div key={p.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
-                    <div className="min-w-0">
-                      <div className="font-bold text-secondary truncate">{p.name}</div>
-                      <div className="text-xs text-slate-400 mt-1">/{p.slug}</div>
+                {!loading && activeTab === "products" && sortProducts(products).map((p, index) => (
+                  <div key={p.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 bg-white rounded-2xl sm:rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+                    <div className="min-w-0 flex items-center gap-3">
+                      <span 
+                        className="shrink-0 inline-flex items-center justify-center px-2 py-1 rounded-lg bg-primary/10 text-primary font-black text-xs border border-primary/20" 
+                        title={`Menu Display Order: #${p.order && p.order > 0 ? p.order : index + 1}`}
+                      >
+                        #{p.order && p.order > 0 ? p.order : index + 1}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="font-bold text-secondary truncate">{p.name}</div>
+                        <div className="text-xs text-slate-400 mt-0.5">/{p.slug}</div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => handleMoveProduct(p, "up")}
+                        disabled={index === 0 || loading}
+                        className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                        title="Move Up (Show earlier in menu)"
+                      >
+                        <ArrowUp size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveProduct(p, "down")}
+                        disabled={index === sortProducts(products).length - 1 || loading}
+                        className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                        title="Move Down (Show later in menu)"
+                      >
+                        <ArrowDown size={14} />
+                      </button>
                       <button
                         onClick={() => setEditingProduct(p)}
-                        className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all cursor-pointer z-10"
+                        className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all cursor-pointer"
                         title="Edit product"
                       >
-                        <Edit3 size={16} className="pointer-events-none" />
+                        <Edit3 size={14} />
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeleteProduct(p.id);
                         }}
-                        className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all cursor-pointer z-10"
+                        className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-slate-200 bg-slate-50 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all cursor-pointer"
                         title="Delete product"
                       >
-                        <Trash2 size={16} className="pointer-events-none" />
+                        <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
@@ -614,7 +692,7 @@ export default function Admin() {
                         <Save size={16} /> {loading ? 'SAVING...' : 'SAVE CHANGES'}
                       </button>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-4 mb-6 text-secondary">
+                    <div className="grid md:grid-cols-3 gap-4 mb-6 text-secondary">
                       <div className="space-y-1">
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Product Name</label>
                         <input type="text" value={editingProduct.name || ''} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })} className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
@@ -622,6 +700,20 @@ export default function Admin() {
                       <div className="space-y-1">
                         <label className="text-xs font-black text-slate-400 uppercase tracking-widest">URL Slug</label>
                         <input type="text" value={editingProduct.slug || ''} onChange={(e) => setEditingProduct({ ...editingProduct, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Display Order</label>
+                          <span className="text-[10px] text-primary font-bold">1 = 1st, 2 = 2nd...</span>
+                        </div>
+                        <input 
+                          type="number" 
+                          min="1" 
+                          placeholder="e.g. 1" 
+                          value={editingProduct.order ?? ''} 
+                          onChange={(e) => setEditingProduct({ ...editingProduct, order: e.target.value ? parseInt(e.target.value, 10) : undefined })} 
+                          className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20" 
+                        />
                       </div>
                     </div>
                     <div className="space-y-1 mb-6 text-secondary">
@@ -776,16 +868,146 @@ export default function Admin() {
                         </div>
                       ))}
                     </div>
-                    <div className="space-y-2 mt-6 pt-6 border-t border-slate-200">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Product Banner (Optional)</label>
-                      <div className="flex items-center gap-6">
-                        <div className="w-full h-40 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
-                          {editingProduct.banner ? <img src={editingProduct.banner} className="w-full h-full object-cover" /> : <ImageIcon size={32} className="text-slate-200" />}
+                    {/* Product Banners - Desktop & Mobile Views */}
+                    <div className="mt-6 pt-6 border-t border-slate-200 space-y-4">
+                      <div>
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest block">
+                          Product Banners (Desktop & Mobile Views)
+                        </label>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Upload separate banners for desktop/laptop screens and mobile devices for the best visual appearance.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Desktop View Banner */}
+                        <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 flex flex-col justify-between gap-3">
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-slate-700">
+                                <Monitor size={15} className="text-primary" /> Desktop View Banner
+                              </span>
+                              <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full border border-primary/20">
+                                1920 × 600 px
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-400">
+                              Correct size: <strong className="text-slate-600">1920 × 600 px</strong> (or 1200 × 400 px, 16:9 widescreen format). Displayed on laptops and PCs.
+                            </p>
+                          </div>
+
+                          <div className="w-full h-36 bg-white rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden relative group">
+                            {editingProduct.banner ? (
+                              <>
+                                <img src={editingProduct.banner} alt="Desktop Banner" className="w-full h-full object-cover" />
+                                <button
+                                  type="button"
+                                  onClick={() => setEditingProduct({ ...editingProduct, banner: "" })}
+                                  className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-600 text-white p-1.5 rounded-lg shadow-md transition-all opacity-0 group-hover:opacity-100"
+                                  title="Remove desktop banner"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </>
+                            ) : (
+                              <div className="text-center p-3">
+                                <Monitor size={28} className="mx-auto text-slate-300 mb-1" />
+                                <span className="text-[11px] text-slate-400 font-medium">No desktop banner uploaded</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              onChange={handleDesktopBannerUpload} 
+                              className="hidden" 
+                              id="desktop-banner-upload" 
+                            />
+                            <label 
+                              htmlFor="desktop-banner-upload" 
+                              className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 text-xs rounded-xl font-bold cursor-pointer transition-all shadow-sm flex items-center justify-center gap-1.5"
+                            >
+                              <ImageIcon size={14} />
+                              {editingProduct.banner ? "CHANGE DESKTOP BANNER" : "UPLOAD DESKTOP BANNER"}
+                            </label>
+                            {editingProduct.banner && (
+                              <button
+                                type="button"
+                                onClick={() => setEditingProduct({ ...editingProduct, banner: "" })}
+                                className="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-bold transition-all border border-red-200"
+                              >
+                                REMOVE
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Mobile View Banner */}
+                        <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 flex flex-col justify-between gap-3">
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-slate-700">
+                                <Smartphone size={15} className="text-primary" /> Mobile View Banner
+                              </span>
+                              <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full border border-primary/20">
+                                750 × 500 px
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-400">
+                              Correct size: <strong className="text-slate-600">750 × 500 px</strong> (or 800 × 600 px, 4:3 or 16:10 mobile format). Displayed on mobile phones.
+                            </p>
+                          </div>
+
+                          <div className="w-full h-36 bg-white rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden relative group">
+                            {editingProduct.mobileBanner ? (
+                              <>
+                                <img src={editingProduct.mobileBanner} alt="Mobile Banner" className="w-full h-full object-cover" />
+                                <button
+                                  type="button"
+                                  onClick={() => setEditingProduct({ ...editingProduct, mobileBanner: "" })}
+                                  className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-600 text-white p-1.5 rounded-lg shadow-md transition-all opacity-0 group-hover:opacity-100"
+                                  title="Remove mobile banner"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </>
+                            ) : (
+                              <div className="text-center p-3">
+                                <Smartphone size={28} className="mx-auto text-slate-300 mb-1" />
+                                <span className="text-[11px] text-slate-400 font-medium">No mobile banner uploaded</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              onChange={handleMobileBannerUpload} 
+                              className="hidden" 
+                              id="mobile-banner-upload" 
+                            />
+                            <label 
+                              htmlFor="mobile-banner-upload" 
+                              className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 text-xs rounded-xl font-bold cursor-pointer transition-all shadow-sm flex items-center justify-center gap-1.5"
+                            >
+                              <ImageIcon size={14} />
+                              {editingProduct.mobileBanner ? "CHANGE MOBILE BANNER" : "UPLOAD MOBILE BANNER"}
+                            </label>
+                            {editingProduct.mobileBanner && (
+                              <button
+                                type="button"
+                                onClick={() => setEditingProduct({ ...editingProduct, mobileBanner: "" })}
+                                className="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-bold transition-all border border-red-200"
+                              >
+                                REMOVE
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <input type="file" accept="image/*" onChange={handleBannerUpload} className="hidden" id="banner-upload" />
-                      <label htmlFor="banner-upload" className="inline-block bg-slate-100 text-slate-600 px-4 py-2 text-sm rounded-xl font-bold cursor-pointer hover:bg-slate-200 transition-all">UPLOAD BANNER IMAGE</label>
-                      <p className="mt-1 text-xs text-slate-400">Recommended: Wide format image (1200x400px or similar)</p>
                     </div>
                     <div className="space-y-2 mt-6 pt-6 border-t border-slate-200">
                       <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Redirect Button (Optional)</label>

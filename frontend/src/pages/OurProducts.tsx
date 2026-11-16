@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { productsApi, Product } from "../lib/productsApi";
+import { productsApi, Product, sortProducts } from "../lib/productsApi";
 import PromoBar from "../components/PromoBar";
 
 export default function OurProducts() {
@@ -13,7 +13,7 @@ export default function OurProducts() {
       try {
         setLoading(true);
         const data = await productsApi.getPublic();
-        setProducts(data);
+        setProducts(sortProducts(data));
       } catch (error) {
         console.error('Failed to load products:', error);
       } finally {
@@ -61,13 +61,22 @@ export default function OurProducts() {
               viewport={{ once: true }}
               className="border-b border-slate-100 pb-12 last:border-b-0 last:pb-0"
             >
-              {product.banner && (
+              {(product.banner || product.mobileBanner) && (
                 <div className="mb-8 rounded-xl overflow-hidden shadow-lg">
-                  <img 
-                    src={product.banner} 
-                    alt={product.name} 
-                    className="w-full h-auto object-cover"
-                  />
+                  {product.banner && (
+                    <img 
+                      src={product.banner} 
+                      alt={product.name} 
+                      className={`${product.mobileBanner ? "hidden md:block" : "block"} w-full h-auto object-cover`}
+                    />
+                  )}
+                  {product.mobileBanner && (
+                    <img 
+                      src={product.mobileBanner} 
+                      alt={product.name} 
+                      className={`${product.banner ? "block md:hidden" : "block"} w-full h-auto object-cover`}
+                    />
+                  )}
                 </div>
               )}
               <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">

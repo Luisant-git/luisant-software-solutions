@@ -26,13 +26,19 @@ export class ProductsService {
   async findAll(adminId: string) {
     return this.prisma.product.findMany({
       where: { adminId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { order: 'asc' },
+        { createdAt: 'desc' },
+      ],
     });
   }
 
   async findAllPublic() {
     return this.prisma.product.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { order: 'asc' },
+        { createdAt: 'desc' },
+      ],
     });
   }
 

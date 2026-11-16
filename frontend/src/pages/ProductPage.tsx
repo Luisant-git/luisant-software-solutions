@@ -32,13 +32,22 @@ export default function ProductPage() {
   return (
     <div className="pt-16 min-h-screen bg-white">
       {/* Banner */}
-      {product.banner && (
+      {(product.banner || product.mobileBanner) && (
         <section className="w-full bg-white">
-          <img 
-            src={product.banner} 
-            alt={product.name} 
-            className="w-full h-auto object-cover"
-          />
+          {product.banner && (
+            <img 
+              src={product.banner} 
+              alt={product.name} 
+              className={`${product.mobileBanner ? "hidden md:block" : "block"} w-full h-auto object-cover`}
+            />
+          )}
+          {product.mobileBanner && (
+            <img 
+              src={product.mobileBanner} 
+              alt={product.name} 
+              className={`${product.banner ? "block md:hidden" : "block"} w-full h-auto object-cover`}
+            />
+          )}
         </section>
       )}
 

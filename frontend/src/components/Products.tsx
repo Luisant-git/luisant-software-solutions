@@ -6,7 +6,7 @@
 import { motion } from "motion/react";
 import { Monitor, Database, ShoppingCart, Globe, Smartphone, Zap, BarChart3, LayoutDashboard, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { productsApi, Product } from "../lib/productsApi";
+import { productsApi, Product, sortProducts } from "../lib/productsApi";
 import { Link } from "react-router-dom";
 
 const ICON_MAP: { [key: string]: any } = {
@@ -41,7 +41,7 @@ export default function Products() {
       try {
         setLoading(true);
         const data = await productsApi.getPublic();
-        setProducts(data.slice(0, 4));
+        setProducts(sortProducts(data).slice(0, 4));
       } catch (error) {
         console.error('Failed to load products:', error);
       } finally {
