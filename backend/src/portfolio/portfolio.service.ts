@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreatePortfolioDto } from './dto/create-portfolio.dto';
+import { CreatePortfolioDto, UpdatePortfolioDto } from './dto/create-portfolio.dto';
 import { CreatePortfolioCategoryDto } from './dto/create-portfolio-category.dto';
 import { UpdatePortfolioCategoryDto } from './dto/update-portfolio-category.dto';
 
@@ -55,6 +55,7 @@ export class PortfolioService {
     const portfolio = await this.prisma.portfolio.create({
       data: {
         ...rest,
+        order: createPortfolioDto.order ?? 0,
         categoryId,
         adminId,
       },
@@ -66,7 +67,10 @@ export class PortfolioService {
 
   async findAll() {
     const portfolios = await this.prisma.portfolio.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { order: 'asc' },
+        { createdAt: 'desc' },
+      ],
       include: { category: { select: { name: true } } },
     });
 
@@ -75,12 +79,16 @@ export class PortfolioService {
 
   async findAllPublic() {
     const portfolios = await this.prisma.portfolio.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { order: 'asc' },
+        { createdAt: 'desc' },
+      ],
       select: {
         id: true,
         title: true,
         slug: true,
         description: true,
+        order: true,
         category: { select: { name: true } },
         image: true,
         images: true,
@@ -114,14 +122,17 @@ export class PortfolioService {
   async findByCategory(category: string) {
     const portfolios = await this.prisma.portfolio.findMany({
       where: { category: { name: category } },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { order: 'asc' },
+        { createdAt: 'desc' },
+      ],
       include: { category: { select: { name: true } } },
     });
 
     return portfolios.map((portfolio) => this.mapPortfolio(portfolio));
   }
 
-  async update(id: string, updatePortfolioDto: Partial<CreatePortfolioDto>) {
+  async update(id: string, updatePortfolioDto: UpdatePortfolioDto) {
     const portfolio = await this.prisma.portfolio.findUnique({
       where: { id },
     });
@@ -137,6 +148,12 @@ export class PortfolioService {
     delete data.adminId;
     delete data.createdAt;
     delete data.updatedAt;
+
+    if (updatePortfolioDto.order !== undefined) {
+      data.order = typeof updatePortfolioDto.order === 'number'
+        ? updatePortfolioDto.order
+        : parseInt(String(updatePortfolioDto.order), 10) || 0;
+    }
 
     // Handle category update
     if (updatePortfolioDto.category || updatePortfolioDto.categoryId) {

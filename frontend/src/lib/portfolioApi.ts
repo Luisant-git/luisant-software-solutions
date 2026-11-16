@@ -16,10 +16,20 @@ export interface Portfolio {
   link?: string;
   caseStudy?: string;
   results?: string[];
+  order?: number;
   adminId: string;
   createdAt: string;
   updatedAt: string;
 }
+
+export const sortPortfolios = (items: Portfolio[]): Portfolio[] => {
+  return [...items].sort((a, b) => {
+    const orderA = typeof a.order === 'number' && a.order > 0 ? a.order : 999999;
+    const orderB = typeof b.order === 'number' && b.order > 0 ? b.order : 999999;
+    if (orderA !== orderB) return orderA - orderB;
+    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+  });
+};
 
 /** Safely extract category name whether the API returns a string or a full object */
 export function getCategoryName(category: Portfolio['category']): string {
@@ -195,7 +205,10 @@ export const portfolioApi = {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to update portfolio');
+      const message = Array.isArray(error.message)
+        ? error.message.join(', ')
+        : (error.message || 'Failed to update portfolio');
+      throw new Error(message);
     }
 
     return response.json();

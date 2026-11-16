@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
-import { portfolioApi, Portfolio, getCategoryName } from "../lib/portfolioApi";
+import { portfolioApi, Portfolio, getCategoryName, sortPortfolios } from "../lib/portfolioApi";
 import PromoBar from "../components/PromoBar";
 import PortfolioCard from "../components/PortfolioCard";
 import CategoryFilter from "../components/CategoryFilter";
@@ -31,16 +31,17 @@ export default function PortfolioPage() {
         description: sanitizeHtml(portfolio.description || "")
       }));
       
-      setPortfolios(sanitizedData);
+      const sortedData = sortPortfolios(sanitizedData);
+      setPortfolios(sortedData);
 
       // Extract unique categories
       const uniqueCategories = Array.from(
-        new Set(sanitizedData.map((p: Portfolio) => getCategoryName(p.category)).filter(c => c))
+        new Set(sortedData.map((p: Portfolio) => getCategoryName(p.category)).filter(c => c))
       ) as string[];
       setCategories(uniqueCategories.sort());
 
       // Set initial filtered portfolios
-      setFilteredPortfolios(sanitizedData);
+      setFilteredPortfolios(sortedData);
     } catch (error) {
       console.error("Failed to load portfolios:", error);
       setError("Failed to load portfolios. Please check your connection and try again.");
@@ -155,10 +156,10 @@ export default function PortfolioPage() {
     setActiveCategory(category);
 
     if (category === "All") {
-      setFilteredPortfolios(portfolios);
+      setFilteredPortfolios(sortPortfolios(portfolios));
     } else {
       setFilteredPortfolios(
-        portfolios.filter((p) => getCategoryName(p.category) === category)
+        sortPortfolios(portfolios.filter((p) => getCategoryName(p.category) === category))
       );
     }
   };

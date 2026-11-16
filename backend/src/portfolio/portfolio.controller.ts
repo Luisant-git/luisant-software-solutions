@@ -10,7 +10,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { PortfolioService } from './portfolio.service';
-import { CreatePortfolioDto } from './dto/create-portfolio.dto';
+import { CreatePortfolioDto, UpdatePortfolioDto } from './dto/create-portfolio.dto';
 import { CreatePortfolioCategoryDto } from './dto/create-portfolio-category.dto';
 import { UpdatePortfolioCategoryDto } from './dto/update-portfolio-category.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -77,7 +77,7 @@ export class PortfolioController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updatePortfolioDto: Partial<CreatePortfolioDto>,
+    @Body() updatePortfolioDto: UpdatePortfolioDto,
   ) {
     return this.portfolioService.update(id, updatePortfolioDto);
   }

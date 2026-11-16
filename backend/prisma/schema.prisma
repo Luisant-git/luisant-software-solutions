@@ -83,6 +83,7 @@ model Portfolio {
   link        String?
   caseStudy   String?  @db.Text
   results     String[] @default([])
+  order       Int      @default(0)
   adminId     String
   admin       Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())

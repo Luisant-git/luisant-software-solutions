@@ -17,8 +17,10 @@ import {
   Edit3,
   ChevronLeft,
   ChevronDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
-import { portfolioApi, Portfolio, getCategoryName } from "../lib/portfolioApi";
+import { portfolioApi, Portfolio, getCategoryName, sortPortfolios } from "../lib/portfolioApi";
 import { uploadApi } from "../lib/uploadApi";
 
 export default function PortfolioAdmin() {
@@ -83,7 +85,7 @@ export default function PortfolioAdmin() {
     try {
       setLoading(true);
       const data = await portfolioApi.getAll();
-      setPortfolios(data);
+      setPortfolios(sortPortfolios(data));
     } catch (error) {
       console.error("Failed to load portfolios:", error);
     } finally {
@@ -126,6 +128,12 @@ export default function PortfolioAdmin() {
         .map(img => img.trim())
         .filter(img => img !== "");
 
+      const parsedOrder = typeof editingPortfolio.order === "number"
+        ? editingPortfolio.order
+        : editingPortfolio.order
+        ? parseInt(String(editingPortfolio.order), 10)
+        : 0;
+
       // Create clean portfolio object without system fields
       const portfolioToSave: any = {
         title: editingPortfolio.title,
@@ -140,6 +148,7 @@ export default function PortfolioAdmin() {
         link: editingPortfolio.link?.trim() || null,
         caseStudy: editingPortfolio.caseStudy?.trim() || null,
         results: cleanedResults,
+        order: isNaN(parsedOrder) ? 0 : parsedOrder,
       };
 
       if (editingPortfolio.id) {
@@ -151,6 +160,59 @@ export default function PortfolioAdmin() {
       await loadPortfolios();
     } catch (error: any) {
       alert(error.message || "Failed to save portfolio");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMovePortfolio = async (portfolio: Portfolio, direction: "up" | "down") => {
+    const sorted = sortPortfolios(portfolios);
+    const currentIndex = sorted.findIndex(p => p.id === portfolio.id);
+    if (currentIndex === -1) return;
+    const targetIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= sorted.length) return;
+
+    const targetPortfolio = sorted[targetIndex];
+    const newOrderCurrent = targetIndex + 1;
+    const newOrderTarget = currentIndex + 1;
+
+    try {
+      setLoading(true);
+      await Promise.all([
+        portfolioApi.update(portfolio.id, {
+          title: portfolio.title,
+          slug: portfolio.slug,
+          description: portfolio.description,
+          category: getCategoryName(portfolio.category),
+          image: portfolio.image,
+          images: portfolio.images || [],
+          clientName: portfolio.clientName || undefined,
+          technologies: portfolio.technologies || [],
+          features: portfolio.features || [],
+          link: portfolio.link || undefined,
+          caseStudy: portfolio.caseStudy || undefined,
+          results: portfolio.results || [],
+          order: newOrderCurrent,
+        }),
+        portfolioApi.update(targetPortfolio.id, {
+          title: targetPortfolio.title,
+          slug: targetPortfolio.slug,
+          description: targetPortfolio.description,
+          category: getCategoryName(targetPortfolio.category),
+          image: targetPortfolio.image,
+          images: targetPortfolio.images || [],
+          clientName: targetPortfolio.clientName || undefined,
+          technologies: targetPortfolio.technologies || [],
+          features: targetPortfolio.features || [],
+          link: targetPortfolio.link || undefined,
+          caseStudy: targetPortfolio.caseStudy || undefined,
+          results: targetPortfolio.results || [],
+          order: newOrderTarget,
+        }),
+      ]);
+      await loadPortfolios();
+    } catch (err: any) {
+      alert(err.message || "Failed to update portfolio order");
     } finally {
       setLoading(false);
     }
@@ -256,6 +318,7 @@ export default function PortfolioAdmin() {
               link: "",
               caseStudy: "",
               results: [""],
+              order: (portfolios.length || 0) + 1,
               adminId: "",
               createdAt: "",
               updatedAt: "",
@@ -277,16 +340,40 @@ export default function PortfolioAdmin() {
             <div className="text-center py-10 text-slate-400 italic">No portfolios added yet.</div>
           )}
           {!loading &&
-            portfolios.map((p) => (
+            sortPortfolios(portfolios).map((p, index, arr) => (
               <div
                 key={p.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md"
               >
-                <div className="min-w-0">
-                  <div className="font-bold text-secondary truncate">{p.title}</div>
-                  <div className="text-xs text-slate-400 mt-1">{getCategoryName(p.category) || 'Uncategorized'}</div>
+                <div className="min-w-0 flex items-center gap-3">
+                  <span
+                    className="inline-flex items-center justify-center min-w-7 h-7 px-2 rounded-full bg-slate-900 text-white text-xs font-black shadow-sm shrink-0"
+                    title={`Display Order: #${index + 1}`}
+                  >
+                    #{p.order && p.order > 0 ? p.order : index + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="font-bold text-secondary truncate">{p.title}</div>
+                    <div className="text-xs text-slate-400 mt-0.5">{getCategoryName(p.category) || 'Uncategorized'}</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                  <button
+                    onClick={() => handleMovePortfolio(p, "up")}
+                    disabled={loading || index === 0}
+                    className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    title="Move Up (1st, 2nd, 3rd...)"
+                  >
+                    <ArrowUp size={14} />
+                  </button>
+                  <button
+                    onClick={() => handleMovePortfolio(p, "down")}
+                    disabled={loading || index === arr.length - 1}
+                    className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    title="Move Down"
+                  >
+                    <ArrowDown size={14} />
+                  </button>
                   <button
                     onClick={() => {
                       // Normalize category to string when editing
@@ -296,17 +383,17 @@ export default function PortfolioAdmin() {
                       };
                       setEditingPortfolio(normalizedPortfolio);
                     }}
-                    className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all"
+                    className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all"
                     title="Edit portfolio"
                   >
-                    <Edit3 size={18} />
+                    <Edit3 size={15} />
                   </button>
                   <button
                     onClick={() => handleDelete(p.id)}
-                    className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all"
+                    className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-slate-200 bg-slate-50 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all"
                     title="Delete portfolio"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={15} />
                   </button>
                 </div>
               </div>
@@ -372,7 +459,7 @@ export default function PortfolioAdmin() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4 mb-6 text-secondary">
+            <div className="grid md:grid-cols-3 gap-4 mb-6 text-secondary">
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
                   Category
@@ -434,6 +521,28 @@ export default function PortfolioAdmin() {
                   }
                   className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center justify-between">
+                  <span>Display Order</span>
+                  <span className="text-[10px] text-slate-400 font-normal">1 = 1st, 2 = 2nd...</span>
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  placeholder="e.g. 1"
+                  value={editingPortfolio.order && editingPortfolio.order > 0 ? editingPortfolio.order : ""}
+                  onChange={(e) =>
+                    setEditingPortfolio({
+                      ...editingPortfolio,
+                      order: e.target.value === "" ? 0 : parseInt(e.target.value, 10),
+                    })
+                  }
+                  className="w-full px-4 py-2 text-sm rounded-xl bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/20 text-secondary"
+                />
+                <p className="text-xs text-slate-400">
+                  Sets order on the portfolio page.
+                </p>
               </div>
             </div>
 
