@@ -18,6 +18,9 @@ export class ProductsService {
     return this.prisma.product.create({
       data: {
         ...createProductDto,
+        description: createProductDto.description || '',
+        points: createProductDto.points || [],
+        order: createProductDto.order ?? 0,
         adminId,
       },
     });
@@ -73,9 +76,11 @@ export class ProductsService {
       }
     }
 
+    const { id: _id, adminId: _adminId, createdAt: _createdAt, updatedAt: _updatedAt, ...data } = updateProductDto as any;
+
     return this.prisma.product.update({
       where: { id },
-      data: updateProductDto,
+      data,
     });
   }
 

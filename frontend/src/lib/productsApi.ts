@@ -86,7 +86,7 @@ export const productsApi = {
 
   async update(id: string, product: Partial<Omit<Product, 'id' | 'adminId' | 'createdAt' | 'updatedAt'>>) {
     const token = authApi.getToken();
-    const { createdAt, updatedAt, adminId, ...data } = product as any;
+    const { createdAt, updatedAt, adminId, id: _id, ...data } = product as any;
     const response = await fetch(`${API_URL}/products/${id}`, {
       method: 'PATCH',
       headers: {
@@ -98,7 +98,10 @@ export const productsApi = {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to update product');
+      const message = Array.isArray(error.message)
+        ? error.message.join(', ')
+        : (error.message || 'Failed to update product');
+      throw new Error(message);
     }
 
     return response.json();

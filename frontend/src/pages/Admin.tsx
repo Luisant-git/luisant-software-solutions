@@ -264,8 +264,28 @@ export default function Admin() {
     try {
       setLoading(true);
       await Promise.all([
-        productsApi.update(product.id, { order: newOrderCurrent }),
-        productsApi.update(targetProduct.id, { order: newOrderTarget }),
+        productsApi.update(product.id, {
+          name: product.name,
+          slug: product.slug,
+          description: product.description,
+          points: product.points || [],
+          buttonName: product.buttonName,
+          buttonUrl: product.buttonUrl,
+          banner: product.banner,
+          mobileBanner: product.mobileBanner,
+          order: newOrderCurrent,
+        }),
+        productsApi.update(targetProduct.id, {
+          name: targetProduct.name,
+          slug: targetProduct.slug,
+          description: targetProduct.description,
+          points: targetProduct.points || [],
+          buttonName: targetProduct.buttonName,
+          buttonUrl: targetProduct.buttonUrl,
+          banner: targetProduct.banner,
+          mobileBanner: targetProduct.mobileBanner,
+          order: newOrderTarget,
+        }),
       ]);
       await loadProducts();
     } catch (err: any) {
