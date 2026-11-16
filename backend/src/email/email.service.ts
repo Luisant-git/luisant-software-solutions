@@ -114,8 +114,7 @@ export class EmailService {
               
               <div style="background-color: #f0f4f8; padding: 20px; border-left: 4px solid #1C77C3; margin-bottom: 25px;">
                 <p style="color: #1C77C3; font-weight: 600; margin: 0 0 10px 0;">Contact Information:</p>
-                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Phone:</strong> +91 427 405 6538</p>
-                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Mobile:</strong> +91 90803 56538</p>
+                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Phone:</strong> +91 90803 56538</p>
                 <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Email:</strong> info@luisantsoftwares.com</p>
               </div>
               
@@ -240,8 +239,7 @@ export class EmailService {
               
               <div style="background-color: #f0f4f8; padding: 20px; border-left: 4px solid #1C77C3; margin-bottom: 25px;">
                 <p style="color: #1C77C3; font-weight: 600; margin: 0 0 10px 0;">Contact Information:</p>
-                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Phone:</strong> +91 427 405 6538</p>
-                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Mobile:</strong> +91 90803 56538</p>
+                <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Phone:</strong> +91 90803 56538</p>
                 <p style="color: #333; margin: 8px 0; font-size: 14px;"><strong>Email:</strong> info@luisantsoftwares.com</p>
               </div>
               

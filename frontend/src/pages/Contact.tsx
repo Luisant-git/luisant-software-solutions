@@ -22,7 +22,9 @@ export default function Contact() {
       label: "Official Support",
       icon: <Mail className="w-6 h-6" />,
       content: (
-        <p className="text-secondary font-black text-base md:text-lg tracking-tight">info@luisantsoftwares.com</p>
+        <a href="mailto:info@luisantsoftwares.com" className="text-secondary hover:text-primary transition-colors font-black text-base md:text-lg tracking-tight block">
+          info@luisantsoftwares.com
+        </a>
       ),
       color: "bg-primary",
     },
@@ -31,7 +33,9 @@ export default function Contact() {
       label: "Landline Number",
       icon: <Phone className="w-6 h-6" />,
       content: (
-        <p className="text-secondary font-black text-xl md:text-2xl tracking-tighter">+91 427 405 6538</p>
+        <a href="tel:+914274056538" className="text-secondary hover:text-primary transition-colors font-black text-xl md:text-2xl tracking-tighter block">
+          +91 427 405 6538
+        </a>
       ),
       color: "bg-primary",
     },
@@ -40,7 +44,9 @@ export default function Contact() {
       label: "Instant Support",
       icon: <Smartphone className="w-6 h-6" />,
       content: (
-        <p className="text-secondary font-black text-xl md:text-2xl tracking-tighter">+91 90803 56538</p>
+        <a href="tel:+919080356538" className="text-secondary hover:text-primary transition-colors font-black text-xl md:text-2xl tracking-tighter block">
+          +91 90803 56538
+        </a>
       ),
       color: "bg-primary",
     }

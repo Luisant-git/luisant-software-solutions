@@ -16,8 +16,8 @@ export default function PrivacyPolicy() {
         {/* Company Info */}
         <div className="mb-8 text-sm text-slate-700 space-y-2 leading-relaxed">
           <p><strong>Who we are:</strong> <strong>Luisant Software Solutions</strong>, registered at <strong>288/6, 2nd Floor, NM Complex, ARRS Multiplex Road, Salem</strong> ("we", "us", "our").</p>
-          <p><strong>Contact:</strong> <a href="mailto:info@luisantsoftwares.com" className="text-primary hover:underline font-semibold">info@luisantsoftwares.com</a> | <a href="tel:+919994683263" className="text-primary hover:underline font-semibold">+91 9994683263</a></p>
-          <p><strong>Grievance Officer (India):</strong> Arunkarthick, <a href="mailto:arun@luisant.in" className="text-primary hover:underline font-semibold">arun@luisant.in</a>, 288/6, 2nd Floor, NM Complex, ARRS Multiplex Road, Salem, +91 9994683263</p>
+          <p><strong>Contact:</strong> <a href="mailto:info@luisantsoftwares.com" className="text-primary hover:underline font-semibold">info@luisantsoftwares.com</a> | <a href="tel:+919080356538" className="text-primary hover:underline font-semibold">+91 90803 56538</a></p>
+          <p><strong>Grievance Officer (India):</strong> Arunkarthick, <a href="mailto:arun@luisant.in" className="text-primary hover:underline font-semibold">arun@luisant.in</a>, 288/6, 2nd Floor, NM Complex, ARRS Multiplex Road, Salem, +91 90803 56538</p>
         </div>
 
         {/* Overview */}
@@ -148,7 +148,7 @@ export default function PrivacyPolicy() {
           <div className="space-y-4">
             <div>
               <p className="text-sm font-bold text-slate-900 mb-2"><strong>How to exercise:</strong></p>
-              <p className="text-sm text-slate-700 leading-relaxed">Email <a href="mailto:info@luisantsoftwares.com" className="text-primary hover:underline font-semibold">info@luisantsoftwares.com</a> or message us on WhatsApp at <a href="https://wa.me/919994683263" className="text-primary hover:underline font-semibold">+91 9994683263</a>.</p>
+              <p className="text-sm text-slate-700 leading-relaxed">Email <a href="mailto:info@luisantsoftwares.com" className="text-primary hover:underline font-semibold">info@luisantsoftwares.com</a> or message us on WhatsApp at <a href="https://wa.me/919080356538" className="text-primary hover:underline font-semibold">+91 90803 56538</a>.</p>
             </div>
             <div>
               <p className="text-sm font-bold text-slate-900 mb-2"><strong>EU/UK GDPR users:</strong></p>

@@ -200,7 +200,7 @@ export default function Blog() {
           </div>
           <div className="mt-6 pt-6 border-t border-white/10">
             <p className="text-slate-300">
-              <strong>Contact Us:</strong> +91 427 405 6538 | info@luisantsoftwares.com
+              <strong>Contact Us:</strong> <a href="tel:+919080356538" className="hover:text-white hover:underline transition-colors">+91 90803 56538</a> | <a href="mailto:info@luisantsoftwares.com" className="hover:text-white hover:underline transition-colors">info@luisantsoftwares.com</a>
             </p>
           </div>
         </motion.div>

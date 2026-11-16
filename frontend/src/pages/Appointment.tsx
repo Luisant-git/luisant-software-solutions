@@ -24,8 +24,8 @@ export default function Appointment() {
               <h3 className="text-lg font-bold text-secondary mb-4">Contact Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
                 {[
-                  { icon: Phone, label: "Call Us", val: "+91 427 405 6538" },
-                  { icon: Mail, label: "Email Us", val: "info@luisantsoftwares.com" },
+                  { icon: Phone, label: "Call Us", val: "+91 90803 56538", href: "tel:+919080356538" },
+                  { icon: Mail, label: "Email Us", val: "info@luisantsoftwares.com", href: "mailto:info@luisantsoftwares.com" },
                   { icon: MapPin, label: "Location", val: "Salem, Tamil Nadu" },
                   { icon: Clock, label: "Mon - Sat", val: "9:30 AM - 7:30 PM" }
                 ].map((item, i) => (
@@ -35,7 +35,13 @@ export default function Appointment() {
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{item.label}</p>
-                      <p className="text-secondary font-semibold text-sm">{item.val}</p>
+                      {item.href ? (
+                        <a href={item.href} className="text-secondary hover:text-primary transition-colors font-semibold text-sm">
+                          {item.val}
+                        </a>
+                      ) : (
+                        <p className="text-secondary font-semibold text-sm">{item.val}</p>
+                      )}
                     </div>
                   </div>
                 ))}

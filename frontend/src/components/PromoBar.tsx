@@ -34,12 +34,13 @@ export default function PromoBar() {
             MAKE AN APPOINTMENT
           </Link>
           
-          <button 
+          <a 
+            href="tel:+919080356538"
             className="bg-white/10 text-white px-5 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-white/20 transition-all active:scale-95 border border-white/10 w-full sm:w-auto"
           >
             <PhoneCall size={16} />
-            +91 427 405 6538
-          </button>
+            +91 90803 56538
+          </a>
         </div>
       </div>
     </section>
